@@ -1,0 +1,861 @@
+<title>Before the First Chart</title>
+<style>
+  :root {
+    --bg: #EAF0EC;
+    --surface: #FFFFFF;
+    --surface-alt: #F4F7F4;
+    --ink: #17231D;
+    --ink-soft: #4E5D55;
+    --ink-faint: #7C8B82;
+    --rule: #CFDBD3;
+    --rule-strong: #AEC0B4;
+    --teal-rgb: 18,122,90;
+    --teal: rgb(var(--teal-rgb));
+    --amber-rgb: 185,130,46;
+    --amber: rgb(var(--amber-rgb));
+    --rose-rgb: 168,69,58;
+    --rose: rgb(var(--rose-rgb));
+    --shadow: 0 1px 2px rgba(23,35,29,0.06), 0 4px 16px rgba(23,35,29,0.05);
+    --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --font-body: "Avenir Next", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1512;
+      --surface: #161F1B;
+      --surface-alt: #131C18;
+      --ink: #E7EEE9;
+      --ink-soft: #9CACA2;
+      --ink-faint: #66766D;
+      --rule: #29352E;
+      --rule-strong: #3A473F;
+      --teal-rgb: 25,158,112;
+      --amber-rgb: 201,133,0;
+      --rose-rgb: 224,104,90;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1512; --surface: #161F1B; --surface-alt: #131C18;
+    --ink: #E7EEE9; --ink-soft: #9CACA2; --ink-faint: #66766D;
+    --rule: #29352E; --rule-strong: #3A473F;
+    --teal-rgb: 25,158,112; --amber-rgb: 201,133,0; --rose-rgb: 224,104,90;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #EAF0EC; --surface: #FFFFFF; --surface-alt: #F4F7F4;
+    --ink: #17231D; --ink-soft: #4E5D55; --ink-faint: #7C8B82;
+    --rule: #CFDBD3; --rule-strong: #AEC0B4;
+    --teal-rgb: 18,122,90; --amber-rgb: 185,130,46; --rose-rgb: 168,69,58;
+    --shadow: 0 1px 2px rgba(23,35,29,0.06), 0 4px 16px rgba(23,35,29,0.05);
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(var(--teal-rgb),0.05) 0, rgba(var(--teal-rgb),0.05) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(90deg, rgba(var(--teal-rgb),0.05) 0, rgba(var(--teal-rgb),0.05) 1px, transparent 1px, transparent 34px);
+    opacity: .5;
+  }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; color: var(--ink); }
+  h1 { font-size: clamp(2rem, 1.5rem + 2vw, 3.1rem); line-height: 1.08; margin: 0 0 .5rem; }
+  h2 { font-size: clamp(1.4rem, 1.2rem + 1vw, 1.9rem); line-height: 1.2; margin: 0 0 .9rem; }
+  h3 { font-size: 1.15rem; margin: 1.6rem 0 .6rem; color: var(--ink); }
+  p { margin: 0 0 1rem; max-width: 68ch; }
+  a { color: var(--teal); font-weight: 600; text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 2px;
+  }
+  code, .mono, .ticker { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .ticker { background: var(--surface-alt); border: 1px solid var(--rule); border-radius: 4px; padding: .05em .4em; font-size: .92em; white-space: nowrap; }
+  strong { color: var(--ink); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 600; margin: 0 0 .8rem;
+  }
+
+  /* ---- layout shell ---- */
+  .shell { position: relative; z-index: 1; display: grid; grid-template-columns: 232px minmax(0,1fr); max-width: 1180px; margin: 0 auto; }
+  @media (max-width: 980px) { .shell { grid-template-columns: 1fr; } }
+
+  nav.rail {
+    position: sticky; top: 0; align-self: start; height: 100vh;
+    padding: 2.2rem 1.2rem 2rem 1.6rem; overflow-y: auto;
+    border-right: 1px solid var(--rule);
+  }
+  @media (max-width: 980px) {
+    nav.rail {
+      position: sticky; top: 0; height: auto; z-index: 5;
+      display: flex; gap: .3rem; overflow-x: auto; overflow-y: hidden;
+      padding: .7rem 1rem; border-right: none; border-bottom: 1px solid var(--rule);
+      background: var(--bg);
+    }
+    nav.rail .rail-title { display: none; }
+  }
+  nav.rail .rail-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; }
+  nav.rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .15rem; }
+  @media (max-width: 980px) { nav.rail ol { flex-direction: row; } }
+  nav.rail a {
+    display: block; font-weight: 500; color: var(--ink-soft); text-decoration: none;
+    font-size: .86rem; padding: .38rem .6rem; border-radius: 6px; white-space: nowrap;
+    border-left: 2px solid transparent;
+  }
+  @media (max-width: 980px) { nav.rail a { border-left: none; border-bottom: 2px solid transparent; } }
+  nav.rail a .num { font-family: var(--font-mono); color: var(--ink-faint); margin-right: .5em; }
+  nav.rail a:hover { background: var(--surface-alt); color: var(--ink); }
+  nav.rail a.active { color: var(--teal); border-left-color: var(--teal); background: var(--surface-alt); font-weight: 700; }
+  @media (max-width: 980px) { nav.rail a.active { border-left-color: transparent; border-bottom-color: var(--teal); } }
+
+  main { min-width: 0; padding: 0 0 6rem; }
+  .hero { padding: 3.4rem clamp(1.2rem,4vw,3.2rem) 2.4rem; border-bottom: 1px solid var(--rule); }
+  .hero p.lede { font-size: 1.18rem; color: var(--ink-soft); max-width: 62ch; }
+  .stat-strip { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.6rem; }
+  .stat-chip {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 8px;
+    padding: .55rem .9rem; box-shadow: var(--shadow);
+  }
+  .stat-chip .v { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; display:block; }
+  .stat-chip .k { font-size: .74rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .06em; }
+
+  section.sec { padding: 3.2rem clamp(1.2rem,4vw,3.2rem); border-bottom: 1px solid var(--rule); scroll-margin-top: 1rem; }
+  @media (max-width: 980px) { section.sec { scroll-margin-top: 3.2rem; } }
+  section.sec .num-tag {
+    font-family: var(--font-mono); color: var(--teal); font-weight: 700; font-size: .85rem;
+    letter-spacing: .04em; display: block; margin-bottom: .3rem;
+  }
+  .prose { max-width: 700px; }
+  .wide { max-width: 900px; }
+
+  /* ---- generic content components ---- */
+  .callout {
+    border-left: 3px solid var(--amber); background: var(--surface); border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem; margin: 1.3rem 0; box-shadow: var(--shadow); max-width: 700px;
+  }
+  .callout.warn { border-left-color: var(--rose); }
+  .callout.good { border-left-color: var(--teal); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .tag { font-family: var(--font-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-faint); display:block; margin-bottom:.35rem; }
+
+  .panel-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.4rem 0; }
+  @media (max-width: 760px) { .panel-pair { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 1.1rem 1.2rem 1.3rem; box-shadow: var(--shadow);
+  }
+  .panel h4 { margin: 0 0 .7rem; font-size: .95rem; font-family: var(--font-body); font-weight: 700; }
+  .panel h4 .sub { display:block; font-weight: 500; color: var(--ink-faint); font-size: .78rem; margin-top: .15rem; }
+
+  table.ref { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  table.ref th, table.ref td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--rule); }
+  table.ref th { font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); font-weight: 600; }
+  table.ref td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
+  .table-scroll table.ref { min-width: 560px; }
+  .table-scroll table.ref th:first-child, .table-scroll table.ref td:first-child { padding-left: 1rem; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0 1.2rem; }
+  .chip { background: var(--surface-alt); border: 1px solid var(--rule); border-radius: 999px; padding: .25rem .75rem; font-size: .82rem; font-family: var(--font-mono); }
+
+  .legend { display: flex; gap: 1.2rem; align-items: center; margin-bottom: .5rem; font-size: .85rem; color: var(--ink-soft); }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: .4em; }
+  .chart-cap { font-size: .82rem; color: var(--ink-faint); margin-top: .5rem; max-width: 620px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1rem; margin: 1.4rem 0; }
+  .gotcha-card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 1.1rem 1.2rem; box-shadow: var(--shadow); position: relative; border-top: 3px solid var(--rose);
+  }
+  .gotcha-card .idx { font-family: var(--font-mono); color: var(--rose); font-weight: 700; font-size: .78rem; }
+  .gotcha-card h4 { margin: .35rem 0 .5rem; font-size: 1rem; font-family: var(--font-body); }
+  .gotcha-card p { font-size: .9rem; color: var(--ink-soft); margin-bottom: 0; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.3rem 0; }
+  @media (max-width: 760px) { .compare { grid-template-columns: 1fr; } }
+  .compare .box { border-radius: 12px; padding: 1.1rem 1.2rem; box-shadow: var(--shadow); border: 1px solid var(--rule); }
+  .compare .weak { background: var(--surface); border-top: 3px solid var(--rose); }
+  .compare .strong { background: var(--surface); border-top: 3px solid var(--teal); }
+  .compare .label { font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-faint); }
+  .compare .claim { font-family: var(--font-display); font-size: 1.05rem; margin: .5rem 0 .7rem; }
+
+  .test-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: .8rem; margin: 1.3rem 0; max-width: 900px; }
+  .test-item { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: .85rem 1rem; box-shadow: var(--shadow); }
+  .test-item .n { font-family: var(--font-mono); color: var(--teal); font-weight: 700; font-size: .8rem; }
+  .test-item h5 { margin: .3rem 0 .3rem; font-size: .95rem; }
+  .test-item p { font-size: .84rem; color: var(--ink-soft); margin: 0; }
+
+  .chain { display: flex; flex-direction: column; max-width: 640px; margin: 1.4rem 0; }
+  .chain .link { position: relative; padding: 0 0 1.6rem 2rem; border-left: 2px solid var(--rule-strong); }
+  .chain .link:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .chain .link::before {
+    content: ""; position: absolute; left: -7px; top: 2px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--surface); border: 2px solid var(--teal);
+  }
+  .chain .link.objection::before { border-color: var(--amber); }
+  .chain .kind { font-family: var(--font-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); }
+  .chain .txt { font-size: .95rem; margin-top: .2rem; }
+  .chain .txt strong { color: var(--ink); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin: 1.4rem 0; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+  .two-col ul { margin: 0; padding-left: 1.1rem; font-size: .92rem; }
+  .two-col li { margin-bottom: .5rem; }
+  .two-col h4 { font-size: .95rem; margin: 0 0 .7rem; display: flex; align-items: center; gap: .4rem; }
+
+  .timeline-wrap { position: relative; height: 108px; margin: 2rem 0 .6rem; max-width: 900px; }
+  .timeline-track { position: absolute; top: 40px; left: 0; right: 0; height: 2px; background: var(--rule-strong); }
+  .tl-point { position: absolute; top: 33px; transform: translateX(-50%); text-align: center; width: 120px; }
+  .tl-point .mark { width: 12px; height: 12px; border-radius: 50%; background: var(--teal); margin: 0 auto 8px; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--teal); cursor: default; }
+  .tl-point .yr { font-family: var(--font-mono); font-size: .74rem; font-weight: 700; color: var(--ink); }
+  .tl-point .lbl { font-size: .74rem; color: var(--ink-faint); line-height: 1.3; }
+
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 50; background: var(--ink); color: var(--bg);
+    font-family: var(--font-mono); font-size: .78rem; padding: .5rem .7rem; border-radius: 8px;
+    box-shadow: var(--shadow); opacity: 0; transition: opacity .1s ease; max-width: 220px; line-height: 1.5;
+  }
+  @media (prefers-reduced-motion: reduce) { .tooltip { transition: none; } }
+  .tooltip.show { opacity: 1; }
+
+  .heat-grid { display: inline-grid; gap: 2px; margin-top: .8rem; }
+  .heat-cell {
+    width: 62px; height: 46px; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: .78rem; font-weight: 600; border-radius: 4px;
+    background-color: rgba(var(--teal-rgb), var(--cell-a, 0.08)); color: var(--ink);
+  }
+  .heat-cell.diag { background: var(--surface-alt); color: var(--ink-faint); font-weight: 400; }
+  .heat-label { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); display:flex; align-items:center; justify-content:center; }
+
+  footer.close { padding: 3.4rem clamp(1.2rem,4vw,3.2rem) 5rem; }
+  footer.close .prose p.big { font-size: 1.1rem; }
+
+  ::selection { background: rgba(var(--teal-rgb), .25); }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="Section navigation">
+    <div class="rail-title">Before the First Chart</div>
+    <ol id="navlist">
+      <li><a href="#start"><span class="num">01</span>Start here</a></li>
+      <li><a href="#row"><span class="num">02</span>Reading one row</a></li>
+      <li><a href="#adjclose"><span class="num">03</span>Close vs. Adjusted</a></li>
+      <li><a href="#currency"><span class="num">04</span>The currency trap</a></li>
+      <li><a href="#volatility"><span class="num">05</span>Returns &amp; volatility</a></li>
+      <li><a href="#correlation"><span class="num">06</span>Do markets move together?</a></li>
+      <li><a href="#company"><span class="num">07</span>Your 49 companies</a></li>
+      <li><a href="#gotchas"><span class="num">08</span>Five ways it bites back</a></li>
+      <li><a href="#hypothesis"><span class="num">09</span>What is a hypothesis</a></li>
+      <li><a href="#story"><span class="num">10</span>A story, not a fact</a></li>
+      <li><a href="#limits"><span class="num">11</span>What you can prove</a></li>
+      <li><a href="#next"><span class="num">12</span>Where we go next</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <p class="eyebrow">Stock dataset primer · for the three of us</p>
+      <h1>Before the first chart</h1>
+      <p class="lede">None of us has a finance background, and the file is 230,111 rows. Before anyone writes a line of chart code, we need to agree on what's actually in each column, where this specific file will quietly mislead us, and what a "hypothesis" even means for this assignment. That's everything on this page &mdash; nothing here is fabricated, every number below was pulled straight out of <code>stock_data.csv</code>.</p>
+      <div class="stat-strip">
+        <div class="stat-chip"><span class="v">230,111</span><span class="k">Rows</span></div>
+        <div class="stat-chip"><span class="v">49</span><span class="k">Companies</span></div>
+        <div class="stat-chip"><span class="v">2006 &rarr; 2026</span><span class="k">Date span</span></div>
+        <div class="stat-chip"><span class="v">6</span><span class="k">Currencies</span></div>
+      </div>
+    </div>
+
+    <!-- 01 -->
+    <section class="sec" id="start">
+      <span class="num-tag">01</span>
+      <h2>Start here</h2>
+      <div class="prose">
+        <p>This file has one row per company per trading day: a date, a ticker symbol, four prices, an adjusted price, and how many shares changed hands. That's it. No earnings, no news, no company names even &mdash; just <code>005930.KS</code> and a number.</p>
+        <p>That's simpler than it sounds, and also stricter than it sounds: it means every argument we make this semester has to be buildable out of price and volume alone. Keep that in the back of your mind as you read &mdash; we'll come back to exactly what that does and doesn't let us claim in section 11.</p>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="sec" id="row">
+      <span class="num-tag">02</span>
+      <h2>Reading one row</h2>
+      <div class="prose">
+        <p>Take a single row: <code>2020-03-16, TSLA, 31.30, 32.99, 29.48, 29.67, 29.67, 307342500</code>. Here's what each field means.</p>
+        <p><strong>Ticker</strong> is the company's trading symbol. A suffix after a dot tells you which exchange it trades on &mdash; and that turns out to matter a lot (section 04):</p>
+      </div>
+      <div class="chip-row">
+        <span class="chip">.KS &rarr; Korea (KRW)</span>
+        <span class="chip">.HK &rarr; Hong Kong (HKD)</span>
+        <span class="chip">.SW &rarr; Switzerland (CHF)</span>
+        <span class="chip">.PA &rarr; Paris (EUR)</span>
+        <span class="chip">.SR &rarr; Saudi Arabia (SAR)</span>
+        <span class="chip">no suffix &rarr; US listing (USD)</span>
+      </div>
+      <div class="prose">
+        <p>A trading day isn't one price, it's thousands of trades happening continuously for hours. <strong>Open, High, Low, Close</strong> compress that whole day into four numbers: the first trade, the highest trade, the lowest trade, and the last trade. <strong>Volume</strong> is simply how many shares changed hands that day.</p>
+      </div>
+
+      <div class="panel wide">
+        <h4>Anatomy of one real trading day<span class="sub">TSLA &middot; March 16, 2020 &middot; the week the market fell fastest during the COVID crash</span></h4>
+        <div id="ohlc-chart"></div>
+        <p class="chart-cap">Tesla opened the day at $31.30, briefly traded as high as $32.99 and as low as $29.48, then closed at $29.67 &mdash; down for the day. 307.3 million shares traded, far more than a calm day. One candle, four numbers, one volume bar.</p>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="sec" id="adjclose">
+      <span class="num-tag">03</span>
+      <h2>Close vs. Adjusted Close</h2>
+      <div class="prose">
+        <p>Two things happen to a stock's price that have nothing to do with the company getting more or less valuable: it can <strong>split</strong> (each share becomes several, each worth proportionally less) or it can pay a <strong>dividend</strong> (cash leaves the company and goes to shareholders, so the share is worth slightly less right after). <code>Adj Close</code> exists to undo both effects so you can measure real growth over time.</p>
+        <p>Here's the part most tutorials get wrong, and that we confirmed by checking real rows in this exact file:</p>
+      </div>
+
+      <div class="panel-pair">
+        <div class="panel">
+          <h4>What the public record says<span class="sub">AAPL, before its 4-for-1 split</span></h4>
+          <p style="font-size:.92rem; margin-bottom:.6rem;">Apple split its stock 4-for-1 on August 31, 2020. On <strong>August 28, 2020</strong>, the day before, its publicly reported closing price was roughly <strong>$499</strong>.</p>
+          <p style="font-size:.92rem; margin-bottom:0;">A truly "raw, as-traded" feed would show ~$499 for that date, forever &mdash; that's what actually printed on the tape that day.</p>
+        </div>
+        <div class="panel">
+          <h4>What this file shows for the same day<span class="sub">Row: 2020-08-28, AAPL</span></h4>
+          <p style="font-size:.92rem; margin-bottom:.6rem;"><code class="ticker">Close = 124.81</code> &nbsp; <code class="ticker">Adj Close = 121.17</code></p>
+          <p style="font-size:.92rem; margin-bottom:0;">Both columns already reflect the split that hadn't happened yet on that date. This file rewrites the entire <code>Close</code> history every time a split occurs &mdash; not just <code>Adj Close</code>.</p>
+        </div>
+      </div>
+
+      <div class="callout good">
+        <span class="tag">What this means for us</span>
+        <p>Don't assume <code>Close</code> is "the raw traded price" the way it might be elsewhere &mdash; here, it already isn't, for splits. The gap that's <em>left over</em> between <code>Close</code> and <code>Adj Close</code> (that 3% above) is dividends only. Rule of thumb: use <code>Adj Close</code> whenever you're computing a return or a growth rate; use <code>Close</code> only when you need the literal price someone would have paid on a given day.</p>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="sec" id="currency">
+      <span class="num-tag">04</span>
+      <h2>The currency trap</h2>
+      <div class="prose">
+        <p>This file holds 49 companies from 6 different currencies, all sitting in the same <code>Close</code> column. Plot two of them together without thinking, and you get this:</p>
+      </div>
+      <div class="panel-pair">
+        <div class="panel">
+          <h4>The naive chart<span class="sub">AAPL vs. Samsung, raw Close, last 24 months</span></h4>
+          <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>AAPL (USD)</span><span><span class="dot" style="background:var(--amber)"></span>005930.KS (KRW)</span></div>
+          <div id="fx-naive"></div>
+        </div>
+        <div class="panel">
+          <h4>The honest chart<span class="sub">Same two companies, indexed to 100 at 2006-01, full history</span></h4>
+          <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>AAPL</span><span><span class="dot" style="background:var(--amber)"></span>005930.KS</span></div>
+          <div id="fx-indexed"></div>
+        </div>
+      </div>
+      <div class="callout warn">
+        <span class="tag">Why the first one lies</span>
+        <p>AAPL's last close in the file is <strong>$264.58</strong>. Samsung's is <strong>&#8361;190,100</strong>. Same day, same column, incomparable units &mdash; on a shared axis, AAPL is a flat line pinned near zero. Whenever we compare tickers across the currency groups in section 02, we index each to 100 at a shared start date (or use percentage returns) instead of plotting raw price.</p>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="sec" id="volatility">
+      <span class="num-tag">05</span>
+      <h2>Returns &amp; volatility</h2>
+      <div class="prose">
+        <p>A <strong>return</strong> is just a percentage change: if a stock goes from $100 to $105, that's a 5% return. <strong>Volatility</strong> measures how much those returns bounce around &mdash; not how much money is lost, a common mix-up. A stock can be volatile and still end up way ahead; it just gets there on a much rougher path.</p>
+      </div>
+      <div class="panel wide">
+        <h4>A steady mover vs. a jumpy one<span class="sub">KO and NVDA, indexed to 100 at 2006-01, ten-year window</span></h4>
+        <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>KO &mdash; Coca-Cola</span><span><span class="dot" style="background:var(--amber)"></span>NVDA &mdash; Nvidia</span></div>
+        <div id="vol-chart"></div>
+        <p class="chart-cap">Same starting point, same ten years. KO's path is a gentle, fairly predictable climb. NVDA's covers the same ground but whipsaws the whole way &mdash; measured as the standard deviation of monthly returns across the full 20-year file, NVDA's typical monthly swing (13.6%) is about three times the size of KO's (4.6%). That's what "volatile" actually means, numerically.</p>
+      </div>
+      <div class="callout">
+        <span class="tag">A warning about "long term"</span>
+        <p>Stretch this same comparison to the <em>full</em> 20-year file instead of just these ten years, and NVDA finishes about <strong>550&times;</strong> its starting value against KO's roughly <strong>7&times;</strong> &mdash; a gap so large the two lines can't even share a readable axis anymore. We're not cherry-picking to make a point; it's the opposite point. Change the end date and the entire story flips. That's exactly why a real hypothesis has to name a specific time window instead of saying "long term" &mdash; more on this in section 09.</p>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="sec" id="correlation">
+      <span class="num-tag">06</span>
+      <h2>Do markets move together?</h2>
+      <div class="prose">
+        <p><strong>Correlation</strong> is a single number from &minus;1 to 1 describing whether two things tend to move up and down together. 1 means they move in perfect lockstep, 0 means no relationship, negative means they tend to move opposite each other. Below is the real correlation of monthly returns between five companies from five different exchanges, computed across the entire file.</p>
+      </div>
+      <div class="panel wide">
+        <h4>Monthly-return correlation, 2006&ndash;2026<span class="sub">Five companies, five exchanges, full history</span></h4>
+        <div id="corr-heatmap"></div>
+        <p class="chart-cap">Darker means more correlated. Even the strongest pair here &mdash; Apple and LVMH (Paris) at 0.46 &mdash; is far short of 1. Averaged over 20 years, these markets are only loosely connected to each other.</p>
+      </div>
+      <div class="callout">
+        <span class="tag">The seed of a real question</span>
+        <p>"Averaged over 20 years" is doing a lot of work in that sentence. Does that looseness hold up during a crisis, or does it tighten? This page won't answer that &mdash; it's exactly the kind of question a real hypothesis is built from.</p>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="sec" id="company">
+      <span class="num-tag">07</span>
+      <h2>Your 49 companies</h2>
+      <div class="prose"><p>Grouped by the currency they trade in, and where they sit on the timeline.</p></div>
+      <div class="table-scroll">
+        <table class="ref">
+          <thead><tr><th>Currency</th><th>Exchange</th><th>Companies in this file</th></tr></thead>
+          <tbody>
+            <tr><td>USD</td><td>United States (incl. ADRs)</td><td>AAPL, ABBV, AMD, AMZN, ASML, AVGO, AZN, BABA, BAC, BRK-B, CAT, COST, CSCO, CVX, GE, GOOGL, HD, HSBC, JNJ, JPM, KO, LLY, LRCX, MA, META, MRK, MSFT, MU, NFLX, NVDA, ORCL, PG, PLTR, TM, TSLA, TSM, V, WMT, XOM</td></tr>
+            <tr><td>KRW</td><td>Korea (.KS)</td><td>000660.KS (SK Hynix), 005930.KS (Samsung)</td></tr>
+            <tr><td>HKD</td><td>Hong Kong (.HK)</td><td>0700.HK (Tencent), 0939.HK, 1288.HK, 1398.HK</td></tr>
+            <tr><td>CHF</td><td>Switzerland (.SW)</td><td>NOVN.SW (Novartis), ROG.SW (Roche)</td></tr>
+            <tr><td>EUR</td><td>Paris (.PA)</td><td>MC.PA (LVMH)</td></tr>
+            <tr><td>SAR</td><td>Saudi Arabia (.SR)</td><td>2222.SR (Saudi Aramco)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="timeline-wrap" id="timeline"></div>
+    </section>
+
+    <!-- 08 -->
+    <section class="sec" id="gotchas">
+      <span class="num-tag">08</span>
+      <h2>Five ways this data bites back</h2>
+      <div class="prose"><p>A quick-reference list &mdash; check this before trusting any chart that spans regions, eras, or tickers with different start dates.</p></div>
+      <div class="card-grid">
+        <div class="gotcha-card">
+          <span class="idx">01</span>
+          <h4>Mixed currencies</h4>
+          <p>Six currencies share one <code>Close</code> column. Index to 100 or use returns &mdash; never raw price across tickers. (Section 04)</p>
+        </div>
+        <div class="gotcha-card">
+          <span class="idx">02</span>
+          <h4>Uneven start dates</h4>
+          <p>Only 33 of 49 tickers span the full file. PLTR starts 2020-09-30, BABA 2014-09-19, META 2012-05-18, TSLA 2010-06-29. Rebase comparisons to a date every plotted ticker actually has.</p>
+        </div>
+        <div class="gotcha-card">
+          <span class="idx">03</span>
+          <h4>Trading calendars don't line up</h4>
+          <p>Full-history row counts differ by exchange &mdash; US 5,065 &middot; Switzerland 5,070 &middot; Paris 5,152 &middot; Korea 4,972 &middot; Hong Kong 4,964. Joining on date across regions leaves gaps.</p>
+        </div>
+        <div class="gotcha-card">
+          <span class="idx">04</span>
+          <h4><code>Close</code> already includes splits</h4>
+          <p>The retroactive rewrite from section 03. What's left between <code>Close</code> and <code>Adj Close</code> is dividends only.</p>
+        </div>
+        <div class="gotcha-card">
+          <span class="idx">05</span>
+          <h4>No fundamentals in this file</h4>
+          <p>Only price and volume &mdash; no earnings, no revenue, no news. We can talk about co-movement and timing, never about <em>why</em>. (Section 11)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section class="sec" id="hypothesis">
+      <span class="num-tag">09</span>
+      <h2>What is a hypothesis</h2>
+      <div class="prose">
+        <p>In everyday speech, "hypothesis" just means a guess. For this assignment it means something narrower: <strong>a specific, falsifiable claim about why the data looks the way it does</strong> &mdash; something the data could actually embarrass you on, not a fact everyone already agrees with.</p>
+      </div>
+      <div class="compare">
+        <div class="box weak">
+          <span class="label">Weak &mdash; a fact, not a hypothesis</span>
+          <p class="claim">"Tech stocks went up a lot."</p>
+          <p style="font-size:.88rem; color:var(--ink-soft); margin:0;">True, obvious, nobody disagrees. One groupby, one chart, nothing left to say.</p>
+        </div>
+        <div class="box strong">
+          <span class="label">Strong &mdash; an actual hypothesis</span>
+          <p class="claim">"The post-2023 rally is a narrow AI-infrastructure story, not a broad tech one &mdash; chipmakers detached from the rest of large-cap tech."</p>
+          <p style="font-size:.88rem; color:var(--ink-soft); margin:0;">Names a mechanism, a time window, a group split. It implies a comparison &mdash; and it could turn out to be wrong.</p>
+        </div>
+      </div>
+      <h3>The four-part test</h3>
+      <div class="test-grid">
+        <div class="test-item"><span class="n">01</span><h5>Falsifiable</h5><p>You can say, in advance, what the chart would look like if you're wrong.</p></div>
+        <div class="test-item"><span class="n">02</span><h5>Non-obvious</h5><p>If the reader already believes it, there's nothing to show them.</p></div>
+        <div class="test-item"><span class="n">03</span><h5>Specific</h5><p>Named tickers, a named group, a named window &mdash; not "tech" or "long term."</p></div>
+        <div class="test-item"><span class="n">04</span><h5>Answerable</h5><p>Provable with price and volume alone &mdash; see section 11 for what that rules out.</p></div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="sec" id="story">
+      <span class="num-tag">10</span>
+      <h2>A story, not a fact</h2>
+      <div class="prose">
+        <p>One hypothesis in isolation is still just a finding &mdash; a single chart, then you're done. A pile of unrelated hypotheses is a report. What makes a <em>story</em> is one central claim, followed by a chain of sub-claims, where each one answers the objection the previous chart raises. Here's what that chain looks like in practice, using the AI-rally example above purely to illustrate the pattern:</p>
+      </div>
+      <div class="chain">
+        <div class="link"><span class="kind">Central claim</span><div class="txt">The rally is narrow AI-infrastructure, not broad tech.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe <strong>all</strong> big tech did this.</div></div>
+        <div class="link"><span class="kind">Chart</span><div class="txt">Chipmakers separate visibly from the rest of large-cap tech.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe chipmakers are always this volatile &mdash; nothing new here.</div></div>
+        <div class="link"><span class="kind">Chart</span><div class="txt">Run the same comparison through 2008 and 2020: they moved <strong>with</strong> the market then. Something changed.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe it's just one company dragging the average.</div></div>
+        <div class="link"><span class="kind">Chart</span><div class="txt">Remove that one company. Does the pattern survive? (The honest answer might be "not entirely" &mdash; that's fine.)</div></div>
+      </div>
+      <div class="callout good">
+        <span class="tag">The part nobody tells you</span>
+        <p>The most interesting slide in a project like this is usually the one where the hypothesis <em>partly</em> breaks. If a chart shows the effect is mostly one company, that's not a failure to hide &mdash; "the effect is narrower than it looks" is often the better finding. Go looking for the crack instead of around it.</p>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="sec" id="limits">
+      <span class="num-tag">11</span>
+      <h2>What you can (and can't) prove with this file</h2>
+      <div class="two-col">
+        <div>
+          <h4><span class="dot" style="background:var(--teal)"></span>You can credibly claim</h4>
+          <ul>
+            <li>Co-movement and correlation between companies or regions</li>
+            <li>Relative performance &mdash; who outran whom, and over what window</li>
+            <li>Volatility and drawdowns &mdash; how rough the ride was</li>
+            <li>The timing of when behavior changed</li>
+            <li>Dispersion within a group &mdash; how much the members differ</li>
+          </ul>
+        </div>
+        <div>
+          <h4><span class="dot" style="background:var(--rose)"></span>You cannot claim</h4>
+          <ul>
+            <li>That anything <em>caused</em> anything &mdash; there's no earnings or news data here</li>
+            <li>Anything about revenue, valuation, or company quality</li>
+            <li>Anything about management decisions or strategy</li>
+            <li>Anything about what happens next</li>
+          </ul>
+        </div>
+      </div>
+      <p class="prose" style="font-size:.92rem; color:var(--ink-soft);">Timing and correlation breaks are your strongest evidence. When a chart shows something changed on a specific date, let the reader connect that to what they already know happened &mdash; don't assert the cause yourself.</p>
+    </section>
+
+    <footer class="close" id="next">
+      <span class="num-tag">12</span>
+      <div class="prose">
+        <h2>Where we go from here</h2>
+        <p class="big">No decision needs to happen today. Before the next time we meet, each of us should independently sketch one or two candidate central claims, run them against the four-part test in section 09, and note which section of this page they'd lean on for evidence. Then we compare notes and check whichever one survives for real signal in the data &mdash; before committing a whole semester to it.</p>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tooltip = document.getElementById('tooltip');
+
+  function showTip(x, y, html) {
+    tooltip.innerHTML = html;
+    tooltip.style.left = (x + 14) + 'px';
+    tooltip.style.top = (y + 14) + 'px';
+    tooltip.classList.add('show');
+  }
+  function hideTip() { tooltip.classList.remove('show'); }
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  /* ---------------- OHLC single candle ---------------- */
+  function renderOHLC(container) {
+    var W = 560, H = 220, pad = 40;
+    var o = 31.30, h = 32.99, l = 29.48, c = 29.67, vol = 307342500;
+    var lo = 28.8, hi = 33.6;
+    function y(v) { return H - pad - ((v - lo) / (hi - lo)) * (H - pad * 1.6); }
+
+    var svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, role: 'img',
+      'aria-label': 'Candlestick showing TSLA open 31.30, high 32.99, low 29.48, close 29.67 on 2020-03-16'});
+
+    var teal = 'rgb(' + cssVar('--teal-rgb') + ')';
+    var rose = 'rgb(' + cssVar('--rose-rgb') + ')';
+    var soft = cssVar('--ink-soft');
+    var faint = cssVar('--ink-faint');
+    var isDown = c < o;
+    var bodyColor = isDown ? rose : teal;
+    var cx = 170;
+
+    // gridline baseline
+    svg.appendChild(svgEl('line', {x1: pad, x2: W - pad, y1: H - pad, y2: H - pad, stroke: cssVar('--rule'), 'stroke-width': 1}));
+
+    // wick
+    svg.appendChild(svgEl('line', {x1: cx, x2: cx, y1: y(h), y2: y(l), stroke: bodyColor, 'stroke-width': 2, 'stroke-linecap': 'round'}));
+    // body
+    var top = Math.min(y(o), y(c)), bot = Math.max(y(o), y(c));
+    var bh = Math.max(bot - top, 4);
+    var rect = svgEl('rect', {x: cx - 16, y: top, width: 32, height: bh, rx: 4, fill: bodyColor, stroke: bodyColor});
+    svg.appendChild(rect);
+
+    var labels = [
+      {v: h, t: 'High', val: '$32.99', side: 1},
+      {v: o, t: 'Open', val: '$31.30', side: -1},
+      {v: c, t: 'Close', val: '$29.67', side: 1},
+      {v: l, t: 'Low', val: '$29.48', side: -1}
+    ];
+    labels.forEach(function(L){
+      var ly = y(L.v);
+      var lx = L.side > 0 ? cx + 34 : cx - 34;
+      var anchor = L.side > 0 ? 'start' : 'end';
+      svg.appendChild(svgEl('line', {x1: cx + (L.side>0?16:-16), x2: lx + (L.side>0?-4:4), y1: ly, y2: ly, stroke: faint, 'stroke-width': 1, 'stroke-dasharray': '2,2'}));
+      var t1 = svgEl('text', {x: lx, y: ly - 5, 'font-size': 11, fill: faint, 'text-anchor': anchor, 'font-family': 'var(--font-mono)'});
+      t1.textContent = L.t;
+      var t2 = svgEl('text', {x: lx, y: ly + 10, 'font-size': 13, fill: cssVar('--ink'), 'text-anchor': anchor, 'font-weight': 700, 'font-family': 'var(--font-mono)'});
+      t2.textContent = L.val;
+      svg.appendChild(t1); svg.appendChild(t2);
+    });
+
+    // direction glyph + text (never rely on color alone)
+    var dirText = svgEl('text', {x: cx, y: H - 12, 'font-size': 12, fill: bodyColor, 'text-anchor': 'middle', 'font-weight': 700});
+    dirText.textContent = (isDown ? '▼ down day' : '▲ up day') + '  ·  vol ' + (vol/1e6).toFixed(1) + 'M sh';
+    svg.appendChild(dirText);
+
+    container.appendChild(svg);
+  }
+
+  /* ---------------- generic indexed line chart with hover ---------------- */
+  function renderLineChart(container, months, seriesList, opts) {
+    opts = opts || {};
+    var W = opts.width || 760, H = opts.height || 260, padL = 46, padR = 14, padT = 16, padB = 28;
+    var n = months.length;
+    var allVals = [];
+    seriesList.forEach(function(s){ allVals = allVals.concat(s.values); });
+    var minV = opts.min !== undefined ? opts.min : Math.min.apply(null, allVals);
+    var maxV = opts.max !== undefined ? opts.max : Math.max.apply(null, allVals);
+    var rangePad = (maxV - minV) * 0.08;
+    minV -= rangePad; maxV += rangePad;
+
+    function x(i) { return padL + (i / (n - 1)) * (W - padL - padR); }
+    function y(v) { return H - padB - ((v - minV) / (maxV - minV)) * (H - padT - padB); }
+
+    var svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, style: 'overflow:visible'});
+
+    // gridlines (3 horizontal)
+    for (var g = 0; g <= 2; g++) {
+      var gv = minV + (maxV - minV) * (g / 2);
+      var gy = y(gv);
+      svg.appendChild(svgEl('line', {x1: padL, x2: W - padR, y1: gy, y2: gy, stroke: cssVar('--rule'), 'stroke-width': 1}));
+      var lbl = svgEl('text', {x: padL - 8, y: gy + 4, 'font-size': 10, fill: cssVar('--ink-faint'), 'text-anchor': 'end', 'font-family': 'var(--font-mono)'});
+      lbl.textContent = opts.fmt ? opts.fmt(gv) : Math.round(gv);
+      svg.appendChild(lbl);
+    }
+
+    seriesList.forEach(function(s){
+      var d = '';
+      s.values.forEach(function(v, i){ d += (i === 0 ? 'M' : 'L') + x(i) + ',' + y(v) + ' '; });
+      svg.appendChild(svgEl('path', {d: d, fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'}));
+      // end label
+      var lastX = x(n - 1), lastY = y(s.values[n - 1]);
+      var endLbl = svgEl('text', {x: lastX + 6, y: lastY + 4, 'font-size': 11, fill: s.color, 'font-weight': 700, 'font-family': 'var(--font-mono)'});
+      endLbl.textContent = s.label;
+      svg.appendChild(endLbl);
+    });
+
+    // hover layer
+    var guide = svgEl('line', {x1: padL, x2: padL, y1: padT, y2: H - padB, stroke: cssVar('--ink-faint'), 'stroke-width': 1, opacity: 0});
+    svg.appendChild(guide);
+    var dots = seriesList.map(function(s){
+      var dot = svgEl('circle', {r: 4, fill: s.color, stroke: cssVar('--surface'), 'stroke-width': 1.5, opacity: 0});
+      svg.appendChild(dot);
+      return dot;
+    });
+    var hitRect = svgEl('rect', {x: padL, y: padT, width: W - padL - padR, height: H - padT - padB, fill: 'transparent'});
+    svg.appendChild(hitRect);
+
+    function nearestIndex(mx) {
+      var frac = (mx - padL) / (W - padL - padR);
+      return Math.max(0, Math.min(n - 1, Math.round(frac * (n - 1))));
+    }
+    hitRect.addEventListener('pointermove', function(e){
+      var rect = svg.getBoundingClientRect();
+      var scaleX = W / rect.width;
+      var mx = (e.clientX - rect.left) * scaleX;
+      var i = nearestIndex(mx);
+      guide.setAttribute('x1', x(i)); guide.setAttribute('x2', x(i)); guide.setAttribute('opacity', 1);
+      var html = '<strong>' + months[i] + '</strong><br/>';
+      seriesList.forEach(function(s, si){
+        dots[si].setAttribute('cx', x(i)); dots[si].setAttribute('cy', y(s.values[i])); dots[si].setAttribute('opacity', 1);
+        html += s.label + ': ' + (opts.fmt ? opts.fmt(s.values[i]) : s.values[i]) + '<br/>';
+      });
+      showTip(e.clientX, e.clientY, html);
+    });
+    hitRect.addEventListener('pointerleave', function(){
+      guide.setAttribute('opacity', 0);
+      dots.forEach(function(d){ d.setAttribute('opacity', 0); });
+      hideTip();
+    });
+
+    container.appendChild(svg);
+  }
+
+  /* ---------------- correlation heatmap ---------------- */
+  function renderHeatmap(container, tickers, matrix) {
+    var n = tickers.length;
+    var grid = document.createElement('div');
+    grid.className = 'heat-grid';
+    grid.style.gridTemplateColumns = '86px repeat(' + n + ', 62px)';
+
+    grid.appendChild(document.createElement('div'));
+    tickers.forEach(function(t){
+      var h = document.createElement('div');
+      h.className = 'heat-label';
+      h.textContent = t;
+      grid.appendChild(h);
+    });
+
+    tickers.forEach(function(rowT){
+      var rl = document.createElement('div');
+      rl.className = 'heat-label';
+      rl.style.justifyContent = 'flex-end';
+      rl.style.paddingRight = '8px';
+      rl.textContent = rowT;
+      grid.appendChild(rl);
+      tickers.forEach(function(colT){
+        var v = matrix[rowT][colT];
+        var cell = document.createElement('div');
+        cell.className = 'heat-cell' + (rowT === colT ? ' diag' : '');
+        cell.textContent = v.toFixed(2);
+        if (rowT !== colT) {
+          cell.style.setProperty('--cell-a', Math.max(0.1, v / 0.5));
+          cell.title = rowT + ' ↔ ' + colT + ': ' + v.toFixed(2);
+          cell.addEventListener('pointermove', function(e){
+            showTip(e.clientX, e.clientY, '<strong>' + rowT + ' ↔ ' + colT + '</strong><br/>correlation: ' + v.toFixed(2));
+          });
+          cell.addEventListener('pointerleave', hideTip);
+        }
+        grid.appendChild(cell);
+      });
+    });
+    container.appendChild(grid);
+  }
+
+  /* ---------------- timeline ---------------- */
+  function renderTimeline(container) {
+    var start = new Date('2006-01-02'), end = new Date('2026-02-20');
+    var span = end - start;
+    var events = [
+      {date: '2006-01-02', yr: '2006', lbl: 'File begins'},
+      {date: '2008-09-15', yr: '2008', lbl: 'Global financial crisis'},
+      {date: '2020-03-16', yr: '2020', lbl: 'COVID crash'},
+      {date: '2022-06-01', yr: '2022', lbl: 'Rate-driven drawdown'},
+      {date: '2023-06-01', yr: '2023+', lbl: 'AI-led rally'},
+      {date: '2026-02-20', yr: '2026', lbl: 'File ends'}
+    ];
+    var track = document.createElement('div');
+    track.className = 'timeline-track';
+    container.appendChild(track);
+    events.forEach(function(ev){
+      var frac = (new Date(ev.date) - start) / span;
+      var pct = Math.min(97, Math.max(3, frac * 100));
+      var pt = document.createElement('div');
+      pt.className = 'tl-point';
+      pt.style.left = pct + '%';
+      pt.innerHTML = '<div class="mark"></div><div class="yr">' + ev.yr + '</div><div class="lbl">' + ev.lbl + '</div>';
+      container.appendChild(pt);
+    });
+  }
+
+  /* ---------------- data (all real, pulled from stock_data.csv) ---------------- */
+  var koVals = [100.0,101.4,101.9,102.1,107.2,105.5,109.1,109.9,110.3,115.3,116.4,119.9,119.0,116.0,120.2,130.6,132.6,131.8,131.3,135.5,145.7,156.6,158.3,156.4,150.4,149.0,156.2,151.0,146.9,134.2,133.0,134.5,137.5,114.6,122.9,118.7,112.1,107.1,116.5,114.1,130.3,128.3,133.2,130.4,144.7,143.7,155.3,154.7,147.3,143.1,150.5,146.3,140.7,138.3,152.1,154.2,162.7,170.5,176.9,184.1,176.0,179.0,187.1,190.2,188.4,191.1,193.2,200.1,193.2,195.4,193.7,201.6,194.5,201.2,214.8,221.5,216.9,228.4,236.1,218.5,223.1,218.7,224.6,214.7,220.6,229.4,241.3,252.5,238.6,241.0,240.8,229.4,229.2,239.4,244.9,251.7,230.5,232.8,237.4,250.5,251.3,262.1,243.1,258.2,265.9,261.0,281.4,265.0,258.4,271.8,256.6,256.7,259.2,250.3,262.1,250.9,258.2,272.6,276.4,278.6,278.3];
+  var nvdaVals = [100.0,104.8,127.4,130.0,102.2,94.7,98.5,129.5,131.6,155.1,164.5,164.6,136.3,137.9,128.0,146.3,154.1,183.8,203.6,227.6,241.8,236.1,210.5,227.0,164.1,142.7,132.1,137.1,164.8,124.9,76.3,84.3,71.5,58.5,49.8,53.8,53.0,55.2,65.8,76.6,69.6,75.3,86.3,96.9,100.3,79.8,87.1,124.6,102.7,108.1,116.1,104.8,87.7,68.1,61.3,62.3,77.9,80.2,90.8,102.8,159.6,151.2,123.2,133.5,133.7,106.4,92.3,88.8,83.5,98.8,104.3,92.5,98.6,101.1,102.8,86.7,82.9,92.2,90.3,93.6,89.0,79.9,80.4,82.3,82.3,85.5,86.7,93.0,98.3,95.3,98.1,100.7,106.2,103.7,107.1,109.9,107.7,126.7,123.5,127.3,131.6,128.4,121.2,135.3,128.3,135.9,146.5,140.1,134.1,154.7,146.8,155.7,155.9,141.7,140.5,159.0,174.4,200.7,225.2,234.1,208.0];
+  var volMonthsFull = [];
+  (function(){
+    var y=2006, m=1;
+    for (var i=0;i<koVals.length;i++){ volMonthsFull.push(y+'-'+String(m).padStart(2,'0')); m++; if(m>12){m=1;y++;} }
+  })();
+
+  var fxMonthsQ = ["2006-01","2006-04","2006-07","2006-10","2007-01","2007-04","2007-07","2007-10","2008-01","2008-04","2008-07","2008-10","2009-01","2009-04","2009-07","2009-10","2010-01","2010-04","2010-07","2010-10","2011-01","2011-04","2011-07","2011-10","2012-01","2012-04","2012-07","2012-10","2013-01","2013-04","2013-07","2013-10","2014-01","2014-04","2014-07","2014-10","2015-01","2015-04","2015-07","2015-10","2016-01","2016-04","2016-07","2016-10","2017-01","2017-04","2017-07","2017-10","2018-01","2018-04","2018-07","2018-10","2019-01","2019-04","2019-07","2019-10","2020-01","2020-04","2020-07","2020-10","2021-01","2021-04","2021-07","2021-10","2022-01","2022-04","2022-07","2022-10","2023-01","2023-04","2023-07","2023-10","2024-01","2024-04","2024-07","2024-10","2025-01","2025-04","2025-07","2025-10","2026-01"];
+  var aaplIdx = [100.0,93.2,90.0,107.4,113.5,132.2,174.5,251.6,179.3,230.4,210.5,142.5,119.4,166.6,216.4,249.6,254.4,345.8,340.7,398.6,449.4,463.7,517.1,536.1,604.5,773.4,808.8,788.4,603.2,586.4,599.3,692.2,663.0,781.5,886.2,1001.2,1086.1,1160.2,1124.5,1107.8,902.4,869.0,966.1,1052.5,1125.0,1331.7,1378.8,1567.1,1552.1,1532.0,1764.0,2028.9,1542.9,1860.3,1974.9,2306.1,2869.2,2723.6,3940.2,4036.7,4893.2,4874.7,5408.7,5554.8,6481.0,5845.8,6026.1,5686.0,5350.4,6291.9,7284.6,6332.4,6837.8,6316.0,8235.0,8377.0,8751.2,7879.8,7696.9,10025.6,9621.8];
+  var secIdx  = [100.0,87.0,82.2,82.6,78.4,77.6,83.0,74.3,80.4,96.1,76.2,71.2,66.1,80.0,97.8,97.7,105.9,114.7,109.5,100.7,132.6,120.7,114.1,130.8,149.6,187.8,176.9,177.0,195.7,205.4,173.0,198.0,173.0,181.5,181.5,168.1,184.5,190.5,160.1,185.4,155.4,168.2,208.0,221.5,266.6,301.5,325.7,372.2,337.2,358.1,312.5,286.5,311.8,309.8,306.4,340.5,381.1,337.8,391.2,382.4,554.1,550.7,530.4,471.6,495.3,455.4,414.9,401.4,414.9,442.6,471.6,452.0,491.2,523.6,566.9,400.0,354.1,375.0,482.4,726.4,1084.5];
+
+  var fxRecentMonths = ["2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+  var aaplRaw = [171.5,170.3,192.2,210.6,222.1,229.0,233.0,225.9,237.3,250.4,236.0,241.8,222.1,212.5,200.9,205.2,207.6,232.1,254.6,270.4,278.9,271.9,259.5,264.6];
+  var secRaw  = [82400.0,77500.0,73500.0,81500.0,83900.0,74300.0,61500.0,59200.0,54200.0,53200.0,52400.0,54500.0,57800.0,55500.0,56200.0,59800.0,71400.0,69700.0,83900.0,107500.0,100500.0,119900.0,160500.0,190100.0];
+
+  var corrTickers = ["AAPL","0700.HK","005930.KS","MC.PA","NOVN.SW"];
+  var corrMatrix = {
+    "AAPL":      {"AAPL":1.0, "0700.HK":0.31, "005930.KS":0.29, "MC.PA":0.46, "NOVN.SW":0.17},
+    "0700.HK":   {"AAPL":0.31, "0700.HK":1.0, "005930.KS":0.10, "MC.PA":0.30, "NOVN.SW":0.01},
+    "005930.KS": {"AAPL":0.29, "0700.HK":0.10, "005930.KS":1.0, "MC.PA":0.25, "NOVN.SW":0.14},
+    "MC.PA":     {"AAPL":0.46, "0700.HK":0.30, "005930.KS":0.25, "MC.PA":1.0, "NOVN.SW":0.19},
+    "NOVN.SW":   {"AAPL":0.17, "0700.HK":0.01, "005930.KS":0.14, "MC.PA":0.19, "NOVN.SW":1.0}
+  };
+
+  function readColor(name){ return 'rgb(' + cssVar(name) + ')'; }
+
+  function build() {
+    renderOHLC(document.getElementById('ohlc-chart'));
+
+    renderLineChart(document.getElementById('fx-naive'), fxRecentMonths, [
+      {label: 'AAPL', values: aaplRaw, color: readColor('--teal-rgb')},
+      {label: '005930.KS', values: secRaw, color: readColor('--amber-rgb')}
+    ], {height: 220, fmt: function(v){ return v >= 1000 ? Math.round(v/1000) + 'k' : Math.round(v); }});
+
+    renderLineChart(document.getElementById('fx-indexed'), fxMonthsQ, [
+      {label: 'AAPL', values: aaplIdx, color: readColor('--teal-rgb')},
+      {label: '005930.KS', values: secIdx, color: readColor('--amber-rgb')}
+    ], {height: 220, min: 0, fmt: function(v){ return Math.round(v); }});
+
+    renderLineChart(document.getElementById('vol-chart'), volMonthsFull, [
+      {label: 'KO', values: koVals, color: readColor('--teal-rgb')},
+      {label: 'NVDA', values: nvdaVals, color: readColor('--amber-rgb')}
+    ], {height: 260, min: 0, fmt: function(v){ return Math.round(v); }});
+
+    renderHeatmap(document.getElementById('corr-heatmap'), corrTickers, corrMatrix);
+    renderTimeline(document.getElementById('timeline'));
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+
+  /* ---------------- scrollspy nav ---------------- */
+  function initScrollspy() {
+    var links = Array.prototype.slice.call(document.querySelectorAll('#navlist a'));
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var sections = Object.keys(map).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+
+    links.forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        var id = a.getAttribute('href').slice(1);
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'});
+      });
+    });
+
+    if (!('IntersectionObserver' in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var link = map[entry.target.id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -70% 0px', threshold: 0});
+    sections.forEach(function(s){ obs.observe(s); });
+  }
+  initScrollspy();
+})();
+</script>
