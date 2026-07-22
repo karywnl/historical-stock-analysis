@@ -59,10 +59,14 @@ market: US 5,065 · Switzerland 5,070 · Paris 5,152 · Korea 4,972 · Hong Kong
 Different holidays. Joining on `Date` across markets leaves gaps — resample to weekly or
 monthly before comparing across regions, or forward-fill explicitly and say so.
 
-**4. Use `Adj Close` for anything about returns.** `Close` ignores splits and dividends, so
-raw-close return series are wrong for most of these tickers. `Adj Close` equals `Close`
-only for the non-dividend payers (AMD, AMZN, BRK-B, NFLX, TSLA, PLTR) — that's expected,
-not a data error. Use `Close` only when the actual traded price is the point.
+**4. `Close` is already split-adjusted — only dividends separate it from `Adj Close`.**
+Verified against AAPL's real 4-for-1 split (2020-08-31): the file's `Close` for 2020-08-28
+is $124.81, not the ~$499 that actually printed that day, so past splits are retroactively
+baked into `Close` too, not just `Adj Close`. What's left between the two columns is
+dividends only — confirmed zero gap for the non-dividend payers (AMD, AMZN, BRK-B, NFLX,
+TSLA, PLTR). Still use `Adj Close` for returns/growth and `Close` for the literal traded
+price on a given day, but don't describe `Close` as "raw" or "unadjusted" — it isn't, for
+splits.
 
 **5. The data runs to 2026-02-20.** Don't describe the tail as "today" or "current."
 
@@ -82,3 +86,39 @@ not a data error. Use `Close` only when the actual traded price is the point.
 - Interesting structure to draw on: the 2008 crash, COVID in early 2020, the 2022 drawdown,
   and the post-2023 AI-driven divergence between semiconductor names (NVDA, AVGO, TSM, ASML)
   and the rest.
+
+## Where we are
+
+Team of 3, no finance background between us. Assignment requires a central **hypothesis**
+that the whole project's charts build a case for — not a one-off fact, and not a grab-bag
+of unrelated findings. See `docs/dataset-primer.html`, a self-contained teaching page (open
+it directly in a browser, safe to share as a file) covering the dataset from scratch —
+OHLCV, the `Close`/`Adj Close` split above, the currency trap, volatility, correlation —
+plus what a hypothesis is, the weak-vs-strong test, and the "central claim + chain of
+sub-claims that answer objections" story structure this assignment wants.
+
+**Current step:** everyone reads the primer and independently sketches 1-2 candidate
+central claims against the four-part test in it (falsifiable, non-obvious, specific,
+answerable with price/volume alone).
+
+**Not yet decided** — candidate directions surfaced so far, none chosen or checked against
+real data yet:
+- **Narrowness of the AI rally** — chipmakers (NVDA, AVGO, TSM, ASML, AMD, MU, LRCX)
+  detached from the rest of large-cap tech post-2023, rather than "tech" broadly rallying.
+  Leading candidate — richest natural chain of sub-claims, plants a crack to go looking for
+  (does it survive with NVDA removed?).
+- **Diversification fails in a crisis** — cross-region correlation (section 06 of the
+  primer) is loose on average (strongest pair here, AAPL–MC.PA, is only 0.46) but may
+  converge toward 1 during 2008/2020/2022 specifically. Untested.
+- **Volatility regimes** — a small fraction of trading days account for most of the total
+  move; calm vs. turbulent periods behave very differently.
+- **Regional decoupling** — the Hong Kong/China names (0700, 0939, 1288, 1398, BABA) may
+  have stopped moving with global markets around 2021.
+
+Two hypotheses were floated and set aside as too narrow to carry a semester on their own
+(a volume-spike-predicts-crashes claim, and a risk-reward/volatility-vs-return claim) —
+worth revisiting as a *sub-claim* inside a bigger story, not as the central thesis.
+
+**Next step:** reconvene, compare each person's candidate claim, then spot-check whichever
+one looks strongest for actual signal in the data (a quick correlation/volatility pull,
+not a full build) before committing the semester to it.
