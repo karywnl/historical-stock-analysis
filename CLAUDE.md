@@ -8,12 +8,15 @@ arguments they support**, not a trading system or a forecasting model.
 Python 3 + pandas, matplotlib/seaborn for charts. Notebooks for exploration, scripts for
 anything reproducible.
 
-The system Python (3.9.6 at `/usr/bin/python3`) has no scientific stack installed. Use a venv:
+Dependencies are managed with `uv` (see `pyproject.toml`). The system Python (3.9.6 at
+`/usr/bin/python3`) has no scientific stack installed and should not be used directly.
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install pandas matplotlib seaborn jupyter
+uv add pandas matplotlib seaborn jupyter
+uv run jupyter lab
 ```
+
+`eda.ipynb` is the Assignment 2 notebook.
 
 ## The dataset
 
@@ -78,6 +81,18 @@ splits.
 - State the transform in the title or caption when one is applied — "indexed to 100 at
   2015-01-02" is part of the chart, not a footnote.
 - Prefer colorblind-safe palettes and direct line labels over legends with many series.
+
+## Working style
+
+- Build notebook/script code step by step, not one-shot. Add a cell or a small chunk,
+  explain what it does, then move to the next piece so the team can follow along.
+- No em-dashes in code comments.
+- In notebook markdown cells, use lowercase bold text (`**heading**`) instead of `##`
+  markdown headers.
+- In notebook markdown/written answers, write column names and file paths as plain text,
+  not backtick code-formatting. Reads like a student wrote it, not like AI output.
+- Written interpretation in markdown cells goes as bullet points with a blank line between
+  each point, not a single prose paragraph.
 
 ## Working notes
 
