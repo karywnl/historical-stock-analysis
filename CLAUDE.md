@@ -104,36 +104,52 @@ splits.
 
 ## Where we are
 
-Team of 3, no finance background between us. Assignment requires a central **hypothesis**
-that the whole project's charts build a case for — not a one-off fact, and not a grab-bag
-of unrelated findings. See `docs/dataset-primer.html`, a self-contained teaching page (open
-it directly in a browser, safe to share as a file) covering the dataset from scratch —
-OHLCV, the `Close`/`Adj Close` split above, the currency trap, volatility, correlation —
-plus what a hypothesis is, the weak-vs-strong test, and the "central claim + chain of
-sub-claims that answer objections" story structure this assignment wants.
+Team of 3 (Team 2), no finance background between us. Assignment 2 (EDA) is done —
+`eda.ipynb`. Assignment 3 (hypotheses, related work, proposed analysis) has a full draft
+at `assignments/26120004_Team2_Assignment3.docx`, due 2026-07-30 afternoon.
 
-**Current step:** everyone reads the primer and independently sketches 1-2 candidate
-central claims against the four-part test in it (falsifiable, non-obvious, specific,
-answerable with price/volume alone).
+**Central thread, now committed:** apparent diversification in this portfolio — whether
+across tech sub-sectors or across world regions — is thinner than it looks. Three
+hypotheses build the case, all traced back to real numbers in the data (see the docx for
+full reasoning and citations):
 
-**Not yet decided** — candidate directions surfaced so far, none chosen or checked against
-real data yet:
-- **Narrowness of the AI rally** — chipmakers (NVDA, AVGO, TSM, ASML, AMD, MU, LRCX)
-  detached from the rest of large-cap tech post-2023, rather than "tech" broadly rallying.
-  Leading candidate — richest natural chain of sub-claims, plants a crack to go looking for
-  (does it survive with NVDA removed?).
-- **Diversification fails in a crisis** — cross-region correlation (section 06 of the
-  primer) is loose on average (strongest pair here, AAPL–MC.PA, is only 0.46) but may
-  converge toward 1 during 2008/2020/2022 specifically. Untested.
-- **Volatility regimes** — a small fraction of trading days account for most of the total
-  move; calm vs. turbulent periods behave very differently.
-- **Regional decoupling** — the Hong Kong/China names (0700, 0939, 1288, 1398, BABA) may
-  have stopped moving with global markets around 2021.
+- **H1 — AI rally narrowness.** Chip/AI names (NVDA, AVGO, TSM, ASML, AMD, MU, LRCX)
+  returned 549% on average since 2023-01-03 vs. 168% for other large-cap tech (AAPL, MSFT,
+  GOOGL, AMZN, META, NFLX, ORCL, CSCO). Holds up strongly. Builds on Assignment 2's Figure 8.
+- **H2 — diversification fails, but only in panic-driven crashes.** Using one stock per
+  region (JPM, 005930.KS, 0700.HK, NOVN.SW, MC.PA — the same one-stock-per-region approach
+  Assignment 2 used for LVMH), average cross-region correlation was 0.25 in a calm
+  2015-2017 baseline, 0.53 in the 2020 COVID crash, and 0.21 in 2022 (below baseline). 2008
+  came out at 0.25, barely different from calm — noisier than expected with only one stock
+  per region (JPM's own volume was 5x normal in 2008, since JPMorgan acquired Bear Stearns
+  that March, which likely drowns out the regional signal for that single ticker). This
+  still directly answers the open question Assignment 2 itself raised (its correlation
+  heatmap was only ever a full-history average), just with an honest caveat on 2008.
+- **H3 — volume/volatility track the same panic-vs-not pattern.** Average volatility: 0.015
+  calm, 0.046 (2008), 0.036 (2020), 0.020 (2022). Average volume vs. calm baseline: 1.0x,
+  2.7x (2008), 1.7x (2020), 0.9x (2022). Clean and consistent across all four periods, even
+  where H2's correlation number is noisy for 2008. Absorbed the earlier
+  volume-spike-predicts-crashes and risk-reward ideas as this sub-claim rather than as a
+  standalone central hypothesis (they were flagged too narrow to carry the whole project).
 
-Two hypotheses were floated and set aside as too narrow to carry a semester on their own
-(a volume-spike-predicts-crashes claim, and a risk-reward/volatility-vs-return claim) —
-worth revisiting as a *sub-claim* inside a bigger story, not as the central thesis.
+Regional decoupling and volatility-regimes (the other two original candidates) were not
+chosen and are still on the shelf if the team wants a fourth angle later.
 
-**Next step:** reconvene, compare each person's candidate claim, then spot-check whichever
-one looks strongest for actual signal in the data (a quick correlation/volatility pull,
-not a full build) before committing the semester to it.
+**Everything lives in a real, executed notebook, not just scripts** —
+`assignment3_analysis.ipynb` (repo root, alongside `eda.ipynb`) builds both new figures:
+Figure A (H1, chip/AI group vs. rest-of-tech group, indexed to 100 since 2023-01-03) and
+Figure B (H2/H3, correlation/volatility/volume bar charts across the four periods). Code is
+kept deliberately simple — explicit loops instead of comprehensions, one ticker per region —
+to stay readable for a team with no prior pandas experience beyond `eda.ipynb`. Both PNGs
+are saved to `assignments/` and are the actual images embedded in the report docx.
+
+**Still needs the team's input before submitting** — left as placeholders in the docx,
+not invented:
+- Team member names
+- Dataset source link (also still a placeholder in the Assignment 2 docx)
+- A read-through, since the report was drafted in one pass without a team review yet
+
+**Next step after submitting Assignment 3:** redo the H2/H3 check with two or three stocks
+per region instead of one (Paris is one stock, Saudi Arabia isn't included at all since
+2222.SR only starts 2019-12-11), which should clean up the noisy 2008 correlation result,
+then start turning H1-H3 into the final chart set for the semester project.
