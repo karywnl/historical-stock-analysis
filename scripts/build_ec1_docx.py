@@ -20,6 +20,7 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ASSIGNMENTS_DIR = REPO_ROOT / "assignments"
+FIGURES_DIR = ASSIGNMENTS_DIR / "figures" / "ec1"
 OUTPUT_PATH = ASSIGNMENTS_DIR / "26120004_Team2_Assignment-EC1.docx"
 
 REG_NUMBER = "26120004"
@@ -85,7 +86,7 @@ def add_body(doc, lines):
 
 
 def add_image(doc, filename, width_inches=6.0, caption=None):
-    path = ASSIGNMENTS_DIR / filename
+    path = FIGURES_DIR / filename
     doc.add_picture(str(path), width=Inches(width_inches))
     doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
     if caption:
@@ -100,8 +101,8 @@ def add_image_pair(doc, filename_left, filename_right, caption_left, caption_rig
     table = doc.add_table(rows=2, cols=2)
     table.autofit = True
     left_cell, right_cell = table.rows[0].cells
-    left_cell.paragraphs[0].add_run().add_picture(str(ASSIGNMENTS_DIR / filename_left), width=Inches(width_inches))
-    right_cell.paragraphs[0].add_run().add_picture(str(ASSIGNMENTS_DIR / filename_right), width=Inches(width_inches))
+    left_cell.paragraphs[0].add_run().add_picture(str(FIGURES_DIR / filename_left), width=Inches(width_inches))
+    right_cell.paragraphs[0].add_run().add_picture(str(FIGURES_DIR / filename_right), width=Inches(width_inches))
     for cell, caption in ((table.rows[1].cells[0], caption_left), (table.rows[1].cells[1], caption_right)):
         p = cell.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -161,16 +162,17 @@ def add_exercise_c(doc):
         "A selection_interval brush on the scatter's date axis filters the bar chart via "
         "transform_filter; a bind_radio dropdown isolates either group."
     )
-    add_image(doc, "ec1_c_linked_views.png", width_inches=2.9,
-               caption="Default (unfiltered) state; brushing and the dropdown only work in the live HTML export")
+    add_image_pair(doc, "ec1_c_linked_views.png", "ec1_c_linked_views_brushed.png",
+                   "Default (unfiltered) state", "After dragging a brush over Jan-Aug 2025")
     add_body(doc, [
         "A static chart only answers one question: which group did better over the whole period "
         "(chip/AI names take 4 of the top 5 spots). The brush turns that into 'did the chip group "
         "also win during this specific window,' recomputed instantly instead of redrawn by hand.",
         "The group dropdown answers whether one group's result is carried by a single name or "
         "spread across it, by hiding the other group instead of asking the reader to filter by color.",
-        "assignments/ec1_c_linked_views.html is the interactive version; a static PNG cannot show "
-        "dragging or clicking.",
+        "The brushed screenshot shows the effect: over just Jan-Aug 2025 the ranking reshuffles, "
+        "ORCL and AMD move to the top and AAPL turns negative, which the full-period bar chart alone "
+        "does not show.",
     ])
 
 
