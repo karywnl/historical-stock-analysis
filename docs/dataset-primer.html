@@ -1,4 +1,4 @@
-<title>Before the First Chart</title>
+<title>The Story So Far</title>
 <style>
   :root {
     --bg: #EAF0EC;
@@ -155,6 +155,10 @@
 
   .panel-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.4rem 0; }
   @media (max-width: 760px) { .panel-pair { grid-template-columns: 1fr; } }
+  .bar-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.4rem 0; max-width: 900px; }
+  @media (max-width: 760px) { .bar-row { grid-template-columns: 1fr; } }
+  .bar-legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: -.2rem 0 1.2rem; font-size: .82rem; color: var(--ink-soft); }
+  .bar-legend .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: .4em; }
   .panel {
     background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
     padding: 1.1rem 1.2rem 1.3rem; box-shadow: var(--shadow);
@@ -246,11 +250,36 @@
   footer.close .prose p.big { font-size: 1.1rem; }
 
   ::selection { background: rgba(var(--teal-rgb), .25); }
+
+  /* ---- print / PDF export ---- */
+  @media print {
+    :root {
+      --bg: #FFFFFF; --surface: #FFFFFF; --surface-alt: #F4F7F4;
+      --ink: #17231D; --ink-soft: #4E5D55; --ink-faint: #5E6E65;
+      --rule: #CFDBD3; --rule-strong: #AEC0B4;
+      --teal-rgb: 18,122,90; --amber-rgb: 185,130,46; --rose-rgb: 168,69,58;
+      --shadow: none;
+    }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; }
+    body::before { display: none; }
+    nav.rail { display: none; }
+    .shell { display: block; max-width: 100%; }
+    main { padding: 0; }
+    .hero { padding: 0 0 1.6rem; }
+    section.sec { padding: 1.4rem 0; page-break-inside: avoid; break-inside: avoid; }
+    footer.close { padding: 1.4rem 0 0; }
+    .panel, .gotcha-card, .test-item, .chain, .compare, table.ref, .bar-row, .panel-pair {
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .table-scroll { overflow-x: visible; }
+    a { color: var(--ink); text-decoration: none; }
+    .tooltip { display: none !important; }
+  }
 </style>
 
 <div class="shell">
   <nav class="rail" aria-label="Section navigation">
-    <div class="rail-title">Before the First Chart</div>
+    <div class="rail-title">The Story So Far</div>
     <ol id="navlist">
       <li><a href="#start"><span class="num">01</span>Start here</a></li>
       <li><a href="#row"><span class="num">02</span>Reading one row</a></li>
@@ -261,22 +290,25 @@
       <li><a href="#company"><span class="num">07</span>Your 49 companies</a></li>
       <li><a href="#gotchas"><span class="num">08</span>Five ways it bites back</a></li>
       <li><a href="#hypothesis"><span class="num">09</span>What is a hypothesis</a></li>
-      <li><a href="#story"><span class="num">10</span>A story, not a fact</a></li>
-      <li><a href="#limits"><span class="num">11</span>What you can prove</a></li>
-      <li><a href="#next"><span class="num">12</span>Where we go next</a></li>
+      <li><a href="#h1"><span class="num">10</span>H1 &middot; the AI rally is narrow</a></li>
+      <li><a href="#h2"><span class="num">11</span>H2 &middot; diversification vs. panic</a></li>
+      <li><a href="#h3"><span class="num">12</span>H3 &middot; volume &amp; volatility agree</a></li>
+      <li><a href="#story"><span class="num">13</span>The story, all together</a></li>
+      <li><a href="#limits"><span class="num">14</span>What you can prove</a></li>
+      <li><a href="#next"><span class="num">15</span>Where we are now</a></li>
     </ol>
   </nav>
 
   <main>
     <div class="hero">
-      <p class="eyebrow">Stock dataset primer · for the three of us</p>
-      <h1>Before the first chart</h1>
-      <p class="lede">None of us has a finance background, and the file is 230,111 rows. Before anyone writes a line of chart code, we need to agree on what's actually in each column, where this specific file will quietly mislead us, and what a "hypothesis" even means for this assignment. That's everything on this page &mdash; nothing here is fabricated, every number below was pulled straight out of <code>stock_data.csv</code>.</p>
+      <p class="eyebrow">Stock dataset primer · for the three of us · assignment 3</p>
+      <h1>The story so far</h1>
+      <p class="lede">None of us has a finance background, and the file is 230,111 rows. This page walks through everything in order: what's actually in each column, where this specific file will quietly mislead us, what a "hypothesis" even means for this assignment &mdash; and then the three real hypotheses we settled on and what the data actually showed when we checked them. Nothing here is fabricated. Every number below was pulled straight out of <code>stock_data.csv</code>, the same file all three of us are working from.</p>
       <div class="stat-strip">
         <div class="stat-chip"><span class="v">230,111</span><span class="k">Rows</span></div>
         <div class="stat-chip"><span class="v">49</span><span class="k">Companies</span></div>
         <div class="stat-chip"><span class="v">2006 &rarr; 2026</span><span class="k">Date span</span></div>
-        <div class="stat-chip"><span class="v">6</span><span class="k">Currencies</span></div>
+        <div class="stat-chip"><span class="v">3</span><span class="k">Hypotheses committed</span></div>
       </div>
     </div>
 
@@ -401,9 +433,9 @@
         <div id="corr-heatmap"></div>
         <p class="chart-cap">Darker means more correlated. Even the strongest pair here &mdash; Apple and LVMH (Paris) at 0.46 &mdash; is far short of 1. Averaged over 20 years, these markets are only loosely connected to each other.</p>
       </div>
-      <div class="callout">
-        <span class="tag">The seed of a real question</span>
-        <p>"Averaged over 20 years" is doing a lot of work in that sentence. Does that looseness hold up during a crisis, or does it tighten? This page won't answer that &mdash; it's exactly the kind of question a real hypothesis is built from.</p>
+      <div class="callout good">
+        <span class="tag">This becomes H2, later on this page</span>
+        <p>"Averaged over 20 years" is doing a lot of work in that sentence. Does that looseness hold up during a crisis, or does it tighten? That question is exactly what turned into our second hypothesis &mdash; jump to section 11 if you want the answer now, or keep reading in order.</p>
       </div>
     </section>
 
@@ -478,7 +510,7 @@
         <div class="box strong">
           <span class="label">Strong &mdash; an actual hypothesis</span>
           <p class="claim">"The post-2023 rally is a narrow AI-infrastructure story, not a broad tech one &mdash; chipmakers detached from the rest of large-cap tech."</p>
-          <p style="font-size:.88rem; color:var(--ink-soft); margin:0;">Names a mechanism, a time window, a group split. It implies a comparison &mdash; and it could turn out to be wrong.</p>
+          <p style="font-size:.88rem; color:var(--ink-soft); margin:0;">Names a mechanism, a time window, a group split. It implies a comparison &mdash; and it could turn out to be wrong. This is our real H1, not a made-up example &mdash; section 10 has the actual chart.</p>
         </div>
       </div>
       <h3>The four-part test</h3>
@@ -486,35 +518,106 @@
         <div class="test-item"><span class="n">01</span><h5>Falsifiable</h5><p>You can say, in advance, what the chart would look like if you're wrong.</p></div>
         <div class="test-item"><span class="n">02</span><h5>Non-obvious</h5><p>If the reader already believes it, there's nothing to show them.</p></div>
         <div class="test-item"><span class="n">03</span><h5>Specific</h5><p>Named tickers, a named group, a named window &mdash; not "tech" or "long term."</p></div>
-        <div class="test-item"><span class="n">04</span><h5>Answerable</h5><p>Provable with price and volume alone &mdash; see section 11 for what that rules out.</p></div>
+        <div class="test-item"><span class="n">04</span><h5>Answerable</h5><p>Provable with price and volume alone &mdash; see section 14 for what that rules out.</p></div>
       </div>
     </section>
 
     <!-- 10 -->
-    <section class="sec" id="story">
+    <section class="sec" id="h1">
       <span class="num-tag">10</span>
-      <h2>A story, not a fact</h2>
+      <h2>H1 &middot; the AI rally is narrow</h2>
       <div class="prose">
-        <p>One hypothesis in isolation is still just a finding &mdash; a single chart, then you're done. A pile of unrelated hypotheses is a report. What makes a <em>story</em> is one central claim, followed by a chain of sub-claims, where each one answers the objection the previous chart raises. Here's what that chain looks like in practice, using the AI-rally example above purely to illustrate the pattern:</p>
+        <p><strong>The claim:</strong> since 2023, "tech went up" is really "a handful of chip and AI companies went up a huge amount, and the rest of tech went up a normal amount." If you thought owning a broad basket of tech names gave you spread-out exposure to the AI story, the two groups below show that isn't really true &mdash; almost all of the extreme gain sits in one narrow group.</p>
+        <p>We split large-cap tech into two groups and averaged each one into a single line, indexed to 100 on 2023-01-03 (that just means: pretend every stock in the group was worth 100 on that day, so we can compare shape and speed of growth, not raw price):</p>
       </div>
-      <div class="chain">
-        <div class="link"><span class="kind">Central claim</span><div class="txt">The rally is narrow AI-infrastructure, not broad tech.</div></div>
-        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe <strong>all</strong> big tech did this.</div></div>
-        <div class="link"><span class="kind">Chart</span><div class="txt">Chipmakers separate visibly from the rest of large-cap tech.</div></div>
-        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe chipmakers are always this volatile &mdash; nothing new here.</div></div>
-        <div class="link"><span class="kind">Chart</span><div class="txt">Run the same comparison through 2008 and 2020: they moved <strong>with</strong> the market then. Something changed.</div></div>
-        <div class="link objection"><span class="kind">Objection</span><div class="txt">Maybe it's just one company dragging the average.</div></div>
-        <div class="link"><span class="kind">Chart</span><div class="txt">Remove that one company. Does the pattern survive? (The honest answer might be "not entirely" &mdash; that's fine.)</div></div>
+      <div class="chip-row">
+        <span class="chip">chip / AI group: NVDA, AVGO, TSM, ASML, AMD, MU, LRCX</span>
+        <span class="chip">rest of tech: AAPL, MSFT, GOOGL, AMZN, META, NFLX, ORCL, CSCO</span>
+      </div>
+      <div class="panel wide">
+        <h4>Figure A &mdash; chip/AI group vs. rest of tech<span class="sub">Indexed to 100 on 2023-01-03, monthly, through 2026-02</span></h4>
+        <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>chip / AI group average</span><span><span class="dot" style="background:var(--amber)"></span>rest of tech average</span></div>
+        <div id="h1-chart"></div>
+        <p class="chart-cap">Both groups start at exactly 100 on the same day. The chip/AI group ends near 649 (a 549% gain on average); the rest-of-tech group ends near 268 (a 168% gain). The gap doesn't appear as one early jump &mdash; it keeps widening the whole way, month after month.</p>
       </div>
       <div class="callout good">
-        <span class="tag">The part nobody tells you</span>
-        <p>The most interesting slide in a project like this is usually the one where the hypothesis <em>partly</em> breaks. If a chart shows the effect is mostly one company, that's not a failure to hide &mdash; "the effect is narrower than it looks" is often the better finding. Go looking for the crack instead of around it.</p>
+        <span class="tag">Why this holds up</span>
+        <p>This isn't the first time we've seen this shape &mdash; Assignment 2's Figure 8 already showed NVDA and AVGO pulling away from ASML, TSM, and Apple since 2009, looking at individual stocks. This chart checks the same idea a different way: two whole groups, averaged, since 2023 specifically. Two different methods, same answer, so H1 holds up strongly.</p>
       </div>
     </section>
 
     <!-- 11 -->
-    <section class="sec" id="limits">
+    <section class="sec" id="h2">
       <span class="num-tag">11</span>
+      <h2>H2 &middot; diversification fails, but only in panics</h2>
+      <div class="prose">
+        <p><strong>The claim:</strong> owning stocks from different regions of the world &mdash; US, Korea, Hong Kong, Switzerland, Paris &mdash; should protect you, because a bad day in one market shouldn't mean a bad day everywhere. That protection turns out to be real most of the time, and to disappear specifically during panic-style crashes.</p>
+        <p>We picked one stock per region &mdash; JPM (US), 005930.KS (Korea), 0700.HK (Hong Kong), NOVN.SW (Switzerland), MC.PA (Paris) &mdash; the same one-stock-per-region approach Assignment 2 used for LVMH representing Paris. For every pair of those five, we measured <strong>correlation</strong>: a score from &minus;1 to 1 for how much two stocks move up and down on the same days. Close to 0 means they're moving pretty independently; close to 1 means they're moving almost in lockstep. We averaged that score across all ten pairs, in four different stretches of time.</p>
+      </div>
+      <div class="bar-legend"><span><span class="dot" style="background:var(--teal)"></span>calm / non-panic period</span><span><span class="dot" style="background:var(--rose)"></span>panic-style crash</span></div>
+      <div class="panel wide">
+        <h4>Average cross-region correlation<span class="sub">All ten region pairs, averaged, four time windows</span></h4>
+        <div id="h2-chart"></div>
+        <p class="chart-cap">Calm years (2015&ndash;2017) sit around 0.25 &mdash; genuinely loose. The 2020 COVID crash jumps to 0.53, more than double &mdash; when the whole world panics at once, region stops mattering and everything sells off together. 2022 actually stays lower than calm, at 0.21, so this isn't "crashes always raise correlation" &mdash; it's specifically panic-style crashes.</p>
+      </div>
+      <div class="callout warn">
+        <span class="tag">The honest caveat, not swept under the rug</span>
+        <p>2008 comes out at 0.25 &mdash; barely different from calm, even though 2008 was arguably the biggest global panic in the dataset. We don't think that means diversification quietly worked in 2008. Our US stock for that window is JPM, and JPMorgan acquired the collapsing Bear Stearns in March 2008 &mdash; JPM's own trading volume ran roughly 5&times; normal that year for reasons that have nothing to do with global contagion. With only one stock standing in for an entire region, that single company's unusual year likely drowns out the real regional signal. We're flagging this as noisy data, not proof the pattern doesn't hold.</p>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="sec" id="h3">
+      <span class="num-tag">12</span>
+      <h2>H3 &middot; volume &amp; volatility agree</h2>
+      <div class="prose">
+        <p><strong>The claim:</strong> if 2008 and 2020 were real panics and 2022 wasn't, that should show up in two other numbers entirely &mdash; how much prices swing around day to day (<strong>volatility</strong>) and how many shares are changing hands (<strong>volume</strong>). These don't depend on picking one stock per region the way H2 does, so they're a good independent check on the same story.</p>
+      </div>
+      <div class="bar-legend"><span><span class="dot" style="background:var(--teal)"></span>calm / non-panic period</span><span><span class="dot" style="background:var(--rose)"></span>panic-style crash</span></div>
+      <div class="bar-row">
+        <div class="panel">
+          <h4>Avg. volatility<span class="sub">std. dev. of daily return</span></h4>
+          <div id="h3-vol-chart"></div>
+        </div>
+        <div class="panel">
+          <h4>Avg. trading volume<span class="sub">vs. calm baseline</span></h4>
+          <div id="h3-volume-chart"></div>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Volatility: 0.015 in calm years, then 0.046 in 2008 and 0.036 in 2020 &mdash; both real panics roughly double-to-triple the calm baseline &mdash; and only 0.020 in 2022, barely above calm. Volume tells the same story: 1.0&times; normal in calm years, 2.7&times; in 2008, 1.7&times; in 2020, and actually slightly below normal (0.9&times;) in 2022.</p>
+      </div>
+      <div class="callout good">
+        <span class="tag">Why this matters for H2</span>
+        <p>2008's volatility and volume numbers are both clearly elevated, exactly where H2's correlation number for 2008 looked suspiciously calm. That's useful: it lets us say "2008 was a real panic" with confidence from these two measurements, even while treating H2's own 2008 correlation figure as unreliable for the reason explained in section 11. Different measurements, same underlying story, and H3 is the one that isn't compromised by the one-stock-per-region limitation.</p>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="sec" id="story">
+      <span class="num-tag">13</span>
+      <h2>The story, all together</h2>
+      <div class="prose">
+        <p>One hypothesis in isolation is still just a finding &mdash; a single chart, then you're done. A pile of unrelated hypotheses is a report. What makes a <em>story</em> is one central claim, followed by a chain of sub-claims, where each one answers the objection the previous chart raises. Here's our actual chain, built from H1, H2, and H3 above:</p>
+      </div>
+      <div class="chain">
+        <div class="link"><span class="kind">Central claim</span><div class="txt">Diversification in this portfolio &mdash; across tech sub-sectors, or across world regions &mdash; is thinner than it looks.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">Surely a broad basket of tech names already spreads out the AI exposure?</div></div>
+        <div class="link"><span class="kind">H1</span><div class="txt">No &mdash; chip/AI names returned 549% since 2023 vs. 168% for the rest of large-cap tech. Almost all the extreme gain sits in one narrow group.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">Fine, but owning different <strong>regions</strong> is a completely different kind of spread &mdash; that should still protect you.</div></div>
+        <div class="link"><span class="kind">H2</span><div class="txt">It does, most of the time (correlation ~0.25, ~0.21). But in the 2020 panic it jumped to 0.53 &mdash; exactly when you'd most want that protection, it weakened.</div></div>
+        <div class="link objection"><span class="kind">Objection</span><div class="txt">2008 was arguably a bigger panic than 2020, and its correlation number barely moved. Doesn't that undercut H2?</div></div>
+        <div class="link"><span class="kind">H3</span><div class="txt">Volatility and volume for 2008 are both clearly elevated (0.046 volatility, 2.7&times; volume) &mdash; it was a real panic, the correlation figure is just noisy because of JPM's own unusual year. Independent measurements back up the story where H2's own number can't.</div></div>
+      </div>
+      <div class="callout good">
+        <span class="tag">The part nobody tells you</span>
+        <p>The most interesting finding in this project is the one that partly breaks: H2's 2008 correlation number doesn't fit the panic story on its own. We didn't hide that or quietly drop 2008 &mdash; we said so, explained the likely reason (one company's unusual year standing in for an entire region), and brought in H3 as an independent check. "The effect is real, but this one measurement of it is noisy" is a better, more honest finding than pretending every number lined up perfectly.</p>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="sec" id="limits">
+      <span class="num-tag">14</span>
       <h2>What you can (and can't) prove with this file</h2>
       <div class="two-col">
         <div>
@@ -541,10 +644,12 @@
     </section>
 
     <footer class="close" id="next">
-      <span class="num-tag">12</span>
+      <span class="num-tag">15</span>
       <div class="prose">
-        <h2>Where we go from here</h2>
-        <p class="big">No decision needs to happen today. Before the next time we meet, each of us should independently sketch one or two candidate central claims, run them against the four-part test in section 09, and note which section of this page they'd lean on for evidence. Then we compare notes and check whichever one survives for real signal in the data &mdash; before committing a whole semester to it.</p>
+        <h2>Where we are now</h2>
+        <p class="big">Assignment 3's draft is written, and it's built on exactly the H1/H2/H3 story above &mdash; nothing on this page is hypothetical anymore. Figure A (H1) and Figure B (H2/H3) are both real, executed charts in <code>assignment3_analysis.ipynb</code>, saved into <code>assignments/</code>, and embedded in the report itself.</p>
+        <p style="font-size:.92rem; color:var(--ink-soft);">Three things are still sitting as placeholders in the docx, waiting on the team rather than invented by anyone: our three names, the dataset's source link, and a proper read-through together before it's submitted.</p>
+        <p style="font-size:.92rem; color:var(--ink-soft);">After it's in: redo the H2/H3 check with two or three stocks per region instead of one &mdash; that's what should clean up the noisy 2008 correlation number flagged in section 11 &mdash; then start turning H1&ndash;H3 into the final chart set for the semester project.</p>
       </div>
     </footer>
   </main>
@@ -635,7 +740,9 @@
   /* ---------------- generic indexed line chart with hover ---------------- */
   function renderLineChart(container, months, seriesList, opts) {
     opts = opts || {};
-    var W = opts.width || 760, H = opts.height || 260, padL = 46, padR = 14, padT = 16, padB = 28;
+    var W = opts.width || 760, H = opts.height || 260, padL = 46, padT = 16, padB = 28;
+    var maxLabelLen = Math.max.apply(null, seriesList.map(function(s){ return s.label.length; }));
+    var padR = Math.max(14, maxLabelLen * 6.2 + 12);
     var n = months.length;
     var allVals = [];
     seriesList.forEach(function(s){ allVals = allVals.concat(s.values); });
@@ -774,6 +881,60 @@
     });
   }
 
+  /* ---------------- generic bar chart with hover ---------------- */
+  function renderBarChart(container, items, opts) {
+    opts = opts || {};
+    var W = opts.width || 380, H = opts.height || 220, padL = 40, padR = 14, padT = 16, padB = 34;
+    var n = items.length;
+    var maxV = opts.max !== undefined ? opts.max : Math.max.apply(null, items.map(function(it){ return it.value; })) * 1.15;
+    var minV = 0;
+
+    function y(v) { return H - padB - ((v - minV) / (maxV - minV)) * (H - padT - padB); }
+    var bandW = (W - padL - padR) / n;
+    var barW = Math.min(52, bandW * 0.55);
+
+    var svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, style: 'overflow:visible'});
+
+    // baseline gridline
+    var gy = y(minV);
+    svg.appendChild(svgEl('line', {x1: padL, x2: W - padR, y1: gy, y2: gy, stroke: cssVar('--rule'), 'stroke-width': 1}));
+
+    if (opts.refLine !== undefined) {
+      var ry = y(opts.refLine);
+      svg.appendChild(svgEl('line', {x1: padL, x2: W - padR, y1: ry, y2: ry, stroke: cssVar('--ink-faint'), 'stroke-width': 1, 'stroke-dasharray': '3,3'}));
+    }
+
+    items.forEach(function(it, i){
+      var cx = padL + bandW * i + bandW / 2;
+      var by = y(it.value);
+      var rect = svgEl('rect', {x: cx - barW/2, y: by, width: barW, height: Math.max(gy - by, 1), rx: 3, fill: it.color});
+      svg.appendChild(rect);
+
+      var valStr = opts.fmt ? opts.fmt(it.value) : String(it.value);
+      var haloW = valStr.length * 6.4 + 6;
+      svg.appendChild(svgEl('rect', {x: cx - haloW/2, y: by - 17, width: haloW, height: 15, fill: cssVar('--surface')}));
+      var valText = svgEl('text', {x: cx, y: by - 6, 'font-size': 11, fill: cssVar('--ink'), 'text-anchor': 'middle', 'font-weight': 700, 'font-family': 'var(--font-mono)'});
+      valText.textContent = valStr;
+      svg.appendChild(valText);
+
+      var lines = it.label.split('\n');
+      lines.forEach(function(line, li){
+        var lblText = svgEl('text', {x: cx, y: H - padB + 14 + li * 11, 'font-size': 10, fill: cssVar('--ink-faint'), 'text-anchor': 'middle', 'font-family': 'var(--font-mono)'});
+        lblText.textContent = line;
+        svg.appendChild(lblText);
+      });
+
+      var hit = svgEl('rect', {x: padL + bandW * i, y: padT, width: bandW, height: H - padT - padB, fill: 'transparent'});
+      hit.addEventListener('pointermove', function(e){
+        showTip(e.clientX, e.clientY, '<strong>' + it.label.replace('\n', ' ') + '</strong><br/>' + (opts.fmt ? opts.fmt(it.value) : it.value));
+      });
+      hit.addEventListener('pointerleave', hideTip);
+      svg.appendChild(hit);
+    });
+
+    container.appendChild(svg);
+  }
+
   /* ---------------- data (all real, pulled from stock_data.csv) ---------------- */
   var koVals = [100.0,101.4,101.9,102.1,107.2,105.5,109.1,109.9,110.3,115.3,116.4,119.9,119.0,116.0,120.2,130.6,132.6,131.8,131.3,135.5,145.7,156.6,158.3,156.4,150.4,149.0,156.2,151.0,146.9,134.2,133.0,134.5,137.5,114.6,122.9,118.7,112.1,107.1,116.5,114.1,130.3,128.3,133.2,130.4,144.7,143.7,155.3,154.7,147.3,143.1,150.5,146.3,140.7,138.3,152.1,154.2,162.7,170.5,176.9,184.1,176.0,179.0,187.1,190.2,188.4,191.1,193.2,200.1,193.2,195.4,193.7,201.6,194.5,201.2,214.8,221.5,216.9,228.4,236.1,218.5,223.1,218.7,224.6,214.7,220.6,229.4,241.3,252.5,238.6,241.0,240.8,229.4,229.2,239.4,244.9,251.7,230.5,232.8,237.4,250.5,251.3,262.1,243.1,258.2,265.9,261.0,281.4,265.0,258.4,271.8,256.6,256.7,259.2,250.3,262.1,250.9,258.2,272.6,276.4,278.6,278.3];
   var nvdaVals = [100.0,104.8,127.4,130.0,102.2,94.7,98.5,129.5,131.6,155.1,164.5,164.6,136.3,137.9,128.0,146.3,154.1,183.8,203.6,227.6,241.8,236.1,210.5,227.0,164.1,142.7,132.1,137.1,164.8,124.9,76.3,84.3,71.5,58.5,49.8,53.8,53.0,55.2,65.8,76.6,69.6,75.3,86.3,96.9,100.3,79.8,87.1,124.6,102.7,108.1,116.1,104.8,87.7,68.1,61.3,62.3,77.9,80.2,90.8,102.8,159.6,151.2,123.2,133.5,133.7,106.4,92.3,88.8,83.5,98.8,104.3,92.5,98.6,101.1,102.8,86.7,82.9,92.2,90.3,93.6,89.0,79.9,80.4,82.3,82.3,85.5,86.7,93.0,98.3,95.3,98.1,100.7,106.2,103.7,107.1,109.9,107.7,126.7,123.5,127.3,131.6,128.4,121.2,135.3,128.3,135.9,146.5,140.1,134.1,154.7,146.8,155.7,155.9,141.7,140.5,159.0,174.4,200.7,225.2,234.1,208.0];
@@ -800,7 +961,35 @@
     "NOVN.SW":   {"AAPL":0.17, "0700.HK":0.01, "005930.KS":0.14, "MC.PA":0.19, "NOVN.SW":1.0}
   };
 
+  var h1Months = ["2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+  var h1ChipLine = [120.8,122.1,137.5,133.3,163.9,169.2,179.0,176.8,161.8,156.9,181.7,203.8,228.3,265.2,285.7,269.8,305.4,338.6,313.1,309.8,318.8,320.4,320.8,330.4,321.1,309.1,277.6,280.8,338.6,400.4,428.1,426.2,489.2,568.2,544.5,560.6,640.5,648.7];
+  var h1RestLine = [112.2,111.2,124.7,128.3,142.2,152.1,157.5,156.8,147.1,149.0,162.4,166.5,175.3,190.0,194.0,182.7,195.8,212.3,204.8,211.7,225.1,225.5,240.6,244.9,263.0,252.7,228.2,232.9,258.5,288.5,296.2,294.1,307.5,304.6,297.9,289.7,287.6,268.4];
+
+  var h2Periods = [
+    {label: 'calm\n2015-2017', value: 0.250, panic: false},
+    {label: '2008\ncrisis', value: 0.250, panic: true},
+    {label: '2020\ncovid crash', value: 0.526, panic: true},
+    {label: '2022\ndrawdown', value: 0.209, panic: false}
+  ];
+  var h3Volatility = [
+    {label: 'calm\n2015-2017', value: 0.0151, panic: false},
+    {label: '2008\ncrisis', value: 0.0455, panic: true},
+    {label: '2020\ncovid crash', value: 0.0357, panic: true},
+    {label: '2022\ndrawdown', value: 0.0198, panic: false}
+  ];
+  var h3Volume = [
+    {label: 'calm\n2015-2017', value: 1.00, panic: false},
+    {label: '2008\ncrisis', value: 2.71, panic: true},
+    {label: '2020\ncovid crash', value: 1.68, panic: true},
+    {label: '2022\ndrawdown', value: 0.93, panic: false}
+  ];
+
   function readColor(name){ return 'rgb(' + cssVar(name) + ')'; }
+  function withPanicColor(items){
+    return items.map(function(it){
+      return {label: it.label, value: it.value, color: it.panic ? readColor('--rose-rgb') : readColor('--teal-rgb')};
+    });
+  }
 
   function build() {
     renderOHLC(document.getElementById('ohlc-chart'));
@@ -822,6 +1011,21 @@
 
     renderHeatmap(document.getElementById('corr-heatmap'), corrTickers, corrMatrix);
     renderTimeline(document.getElementById('timeline'));
+
+    renderLineChart(document.getElementById('h1-chart'), h1Months, [
+      {label: 'chip / AI', values: h1ChipLine, color: readColor('--teal-rgb')},
+      {label: 'rest of tech', values: h1RestLine, color: readColor('--amber-rgb')}
+    ], {height: 280, min: 0, fmt: function(v){ return Math.round(v); }});
+
+    renderBarChart(document.getElementById('h2-chart'), withPanicColor(h2Periods), {
+      width: 720, height: 220, fmt: function(v){ return v.toFixed(2); }, refLine: 0.25
+    });
+    renderBarChart(document.getElementById('h3-vol-chart'), withPanicColor(h3Volatility), {
+      fmt: function(v){ return v.toFixed(3); }
+    });
+    renderBarChart(document.getElementById('h3-volume-chart'), withPanicColor(h3Volume), {
+      fmt: function(v){ return v.toFixed(2) + 'x'; }, refLine: 1.0
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
