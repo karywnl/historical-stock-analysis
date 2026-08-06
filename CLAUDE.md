@@ -145,11 +145,48 @@ are saved to `assignments/` and are the actual images embedded in the report doc
 
 **Still needs the team's input before submitting** — left as placeholders in the docx,
 not invented:
-- Team member names
-- Dataset source link (also still a placeholder in the Assignment 2 docx)
+- ~~Team member names~~ resolved: Karthikeyan M (26120004), Mirthula M (26120121),
+  Lakshmi Mayuri Kavya N (26120161) — same roster now used for Assignment 4.
+- Dataset source link: https://www.kaggle.com/datasets/ibrahimshahrukh/top-50-companies-dataset
+  — since taken down by its uploader, but this is where the team originally got
+  `data/stock_data.csv`. Filled into the Assignment 4 docx with that caveat; still a
+  placeholder in the Assignment 2 docx as of this writing.
 - A read-through, since the report was drafted in one pass without a team review yet
 
 **Next step after submitting Assignment 3:** redo the H2/H3 check with two or three stocks
 per region instead of one (Paris is one stock, Saudi Arabia isn't included at all since
 2222.SR only starts 2019-12-11), which should clean up the noisy 2008 correlation result,
 then start turning H1-H3 into the final chart set for the semester project.
+
+### Assignment 4 — R for Data Visualization: Fundamentals & First EDA
+
+Redoes the Assignment 2 python EDA in R, same dataset and same questions, per the
+assignment's own instructions ("Part C mirrors the structure of your Python EDA").
+
+- **Part A (installation):** done. R 4.6.1 and RStudio installed via Homebrew
+  (`brew install --cask r rstudio`) rather than the CRAN/Posit GUI installers — same
+  result. Rosetta 2 also installed (`softwareupdate --install-rosetta`), needed because
+  RStudio bundles a couple of Intel-only helper binaries even though the main app is a
+  universal binary. All four packages (tidyverse, data.table, lubridate, reshape2) load
+  clean. Dataset loads as 230,111 × 8, matching Assignment 2 exactly — R just renames
+  `Adj Close` to `Adj.Close` (no spaces allowed) and reads `Date` as plain text rather
+  than a date type.
+- **Part B (concept check):** done. Answered by a teammate (not drafted by Claude,
+  intentionally, since it is meant to test the team's own understanding), then
+  transcribed into the docx. One gap flagged in-place for the team to close before
+  submitting: B.2 asks for a measure of spread robust to outliers (e.g. IQR) alongside
+  median vs. mean, and that half of the answer wasn't given.
+- **Part C (R EDA):** done. `assignment4_eda.R` (repo root) reproduces every figure from
+  `eda.ipynb` in R — daily-return histogram, market bar chart, outlier box plot,
+  volume-vs-move scatter (recreated in Lattice for the "second graphics system"
+  requirement), the 8-ticker correlation heatmap, mean-return-by-market, and the
+  indexed-to-100 chip-vs-AAPL/MSFT line chart. Every number matched the Python EDA
+  exactly. One genuine R-specific find: `scale_x_log10()` warned about infinite values,
+  which led to discovering 1,706 zero-volume rows (0.74% of the dataset), 85% of them on
+  a single ticker, AZN — a real data-quality issue the Python version's matplotlib log
+  scale didn't surface as a visible warning. Figures saved as `assignments/fig1_...png`
+  through `fig8_...png`; report assembled by `scripts/build_assignment4_docx.py` into
+  `assignments/26120004_Team2_Assignment4.docx`.
+- **Still needs the team's input before submitting:** the B.2 gap above, submission date
+  (no due date was given in this conversation — the docx has
+  `[team: confirm submission date]` as a placeholder), and a team read-through.
