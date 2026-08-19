@@ -1,4 +1,4 @@
-"""Build the Assignment 2 Word deliverable from eda.ipynb.
+"""Build the Assignment 2 Word deliverable from analysis.ipynb.
 
 Reads the executed notebook and rebuilds it as a docx: markdown becomes
 formatted text, code cells become monospace blocks, and figure outputs
@@ -6,7 +6,7 @@ become embedded images. The interactive plotly figure has no static image
 in the notebook, so its underlying chart is rebuilt here and exported to
 PNG with kaleido.
 
-Usage: uv run python scripts/build_docx.py
+Usage: uv run python assignment_2/build_submission.py
 """
 
 import base64
@@ -20,9 +20,10 @@ from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-NOTEBOOK_PATH = REPO_ROOT / "eda.ipynb"
-OUTPUT_PATH = REPO_ROOT / "assignments" / "26120004_2_Assignment2.docx"
+ASSIGNMENT_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = ASSIGNMENT_ROOT.parent
+NOTEBOOK_PATH = Path(__file__).with_name("analysis.ipynb")
+OUTPUT_PATH = ASSIGNMENT_ROOT / "docs" / "submissions" / "26120004_2_Assignment2.docx"
 
 REG_NUMBER = "26120004"
 TEAM_NUMBER = "2"
@@ -113,7 +114,7 @@ def add_output_text(doc, text):
 
 
 def add_output_image(doc, png_bytes):
-    tmp_path = REPO_ROOT / "scripts" / "_tmp_fig.png"
+    tmp_path = Path(__file__).with_name("_tmp_fig.png")
     tmp_path.write_bytes(png_bytes)
     doc.add_picture(str(tmp_path), width=Inches(6))
     tmp_path.unlink()
@@ -187,7 +188,7 @@ def main():
                 elif is_missing_value_table:
                     add_output_text(doc, get_output_text(output))
 
-    OUTPUT_PATH.parent.mkdir(exist_ok=True)
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     doc.save(OUTPUT_PATH)
     print(f"wrote {OUTPUT_PATH}")
 

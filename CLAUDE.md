@@ -16,7 +16,7 @@ uv add pandas matplotlib seaborn jupyter
 uv run jupyter lab
 ```
 
-`eda.ipynb` is the Assignment 2 notebook.
+`assignment_2/analysis.ipynb` is the Assignment 2 notebook.
 
 ## The dataset
 
@@ -105,8 +105,8 @@ splits.
 ## Where we are
 
 Team of 3 (Team 2), no finance background between us. Assignment 2 (EDA) is done —
-`eda.ipynb`. Assignment 3 (hypotheses, related work, proposed analysis) has a full draft
-at `assignments/26120004_Team2_Assignment3.docx`, due 2026-07-30 afternoon.
+`assignment_2/analysis.ipynb`. Assignment 3 (hypotheses, related work, proposed analysis) has a full draft
+at `assignment_3/docs/submissions/26120004_Team2_Assignment3.docx`, due 2026-07-30 afternoon.
 
 **Central thread, now committed:** apparent diversification in this portfolio — whether
 across tech sub-sectors or across world regions — is thinner than it looks. Three
@@ -136,12 +136,12 @@ Regional decoupling and volatility-regimes (the other two original candidates) w
 chosen and are still on the shelf if the team wants a fourth angle later.
 
 **Everything lives in a real, executed notebook, not just scripts** —
-`assignment3_analysis.ipynb` (repo root, alongside `eda.ipynb`) builds both new figures:
+`assignment_3/analysis.ipynb` builds both new figures:
 Figure A (H1, chip/AI group vs. rest-of-tech group, indexed to 100 since 2023-01-03) and
 Figure B (H2/H3, correlation/volatility/volume bar charts across the four periods). Code is
 kept deliberately simple — explicit loops instead of comprehensions, one ticker per region —
-to stay readable for a team with no prior pandas experience beyond `eda.ipynb`. Both PNGs
-are saved to `assignments/` and are the actual images embedded in the report docx.
+to stay readable for a team with no prior pandas experience beyond `assignment_2/analysis.ipynb`. Both PNGs
+are saved to `assignment_3/figures/` and are the actual images embedded in the report docx.
 
 **Still needs the team's input before submitting** — left as placeholders in the docx,
 not invented:
@@ -176,17 +176,17 @@ assignment's own instructions ("Part C mirrors the structure of your Python EDA"
   transcribed into the docx. One gap flagged in-place for the team to close before
   submitting: B.2 asks for a measure of spread robust to outliers (e.g. IQR) alongside
   median vs. mean, and that half of the answer wasn't given.
-- **Part C (R EDA):** done. `assignment4_eda.R` (repo root) reproduces every figure from
-  `eda.ipynb` in R — daily-return histogram, market bar chart, outlier box plot,
+- **Part C (R EDA):** done. `assignment_4/analysis.R` reproduces every figure from
+  `assignment_2/analysis.ipynb` in R — daily-return histogram, market bar chart, outlier box plot,
   volume-vs-move scatter (recreated in Lattice for the "second graphics system"
   requirement), the 8-ticker correlation heatmap, mean-return-by-market, and the
   indexed-to-100 chip-vs-AAPL/MSFT line chart. Every number matched the Python EDA
   exactly. One genuine R-specific find: `scale_x_log10()` warned about infinite values,
   which led to discovering 1,706 zero-volume rows (0.74% of the dataset), 85% of them on
   a single ticker, AZN — a real data-quality issue the Python version's matplotlib log
-  scale didn't surface as a visible warning. Figures saved as `assignments/fig1_...png`
-  through `fig8_...png`; report assembled by `scripts/build_assignment4_docx.py` into
-  `assignments/26120004_Team2_Assignment4.docx`.
+  scale didn't surface as a visible warning. Figures are saved under `assignment_4/figures/`;
+  the report is assembled by `assignment_4/build_submission.py` into
+  `assignment_4/docs/submissions/26120004_Team2_Assignment4.docx`.
 - **Still needs the team's input before submitting:** the B.2 gap above, submission date
   (no due date was given in this conversation — the docx has
   `[team: confirm submission date]` as a placeholder), and a team read-through.

@@ -7,7 +7,7 @@ instead of each notebook picking its own colors.
 
 Usage:
     import sys
-    sys.path.insert(0, "scripts")
+    sys.path.insert(0, "extra_credit_1")
     import chart_style
 
     fig, ax = plt.subplots(figsize=chart_style.FIGSIZE_STANDARD)

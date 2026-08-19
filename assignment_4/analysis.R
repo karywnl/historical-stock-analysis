@@ -1,5 +1,5 @@
 # assignment 4 - r eda
-# mirrors eda.ipynb (assignment 2), same dataset, same questions, written in r
+# mirrors assignment 2, same dataset, same questions, written in r
 
 # part a: installation and setup
 # install.packages() only needs to run once per machine, commented out here
@@ -59,7 +59,7 @@ fig1 <- ggplot(data.frame(Daily.Return = returns), aes(x = Daily.Return)) +
     y = 'Number of ticker-days'
   )
 fig1
-ggsave('assignments/figures/assignment4/fig1_daily_return_hist.png', fig1, width = 8, height = 4, dpi = 150)
+ggsave('assignment_4/figures/fig1_daily_return_hist.png', fig1, width = 8, height = 4, dpi = 150)
 
 # c1.2 category counts for a key categorical variable
 # same categorical variable as the python eda: market, derived from ticker suffix
@@ -86,7 +86,7 @@ market_counts <- table(df$Market)
 market_counts <- sort(market_counts, decreasing = TRUE)
 market_counts
 
-png('assignments/figures/assignment4/fig2_market_counts.png', width = 800, height = 500)
+png('assignment_4/figures/fig2_market_counts.png', width = 800, height = 500)
 par(mar = c(8, 5, 4, 2))
 barplot(market_counts,
         main = 'Figure 2: row count by market, stock data 2006-01-02 to 2026-02-20',
@@ -105,7 +105,7 @@ fig3 <- ggplot(data.frame(Daily.Return = returns), aes(x = Daily.Return)) +
   ) +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
 fig3
-ggsave('assignments/figures/assignment4/fig3_daily_return_box.png', fig3, width = 8, height = 3, dpi = 150)
+ggsave('assignment_4/figures/fig3_daily_return_box.png', fig3, width = 8, height = 3, dpi = 150)
 
 q1 <- quantile(returns, 0.25)
 q3 <- quantile(returns, 0.75)
@@ -148,7 +148,7 @@ fig4 <- ggplot(sample_df, aes(x = Volume, y = Abs.Daily.Return)) +
     y = 'Absolute daily return (fraction)'
   )
 fig4
-ggsave('assignments/figures/assignment4/fig4_volume_vs_move.png', fig4, width = 8, height = 5, dpi = 150)
+ggsave('assignment_4/figures/fig4_volume_vs_move.png', fig4, width = 8, height = 5, dpi = 150)
 
 # c2.2 correlation heatmap
 # same eight tickers as the python eda: five chip names, two broader tech names,
@@ -171,7 +171,7 @@ fig5 <- ggplot(corr_long, aes(x = Ticker1, y = Ticker2, fill = Correlation)) +
   labs(title = 'Figure 5: daily return correlation, eight tickers, full overlapping history', x = '', y = '') +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 fig5
-ggsave('assignments/figures/assignment4/fig5_correlation_heatmap.png', fig5, width = 7, height = 6, dpi = 150)
+ggsave('assignment_4/figures/fig5_correlation_heatmap.png', fig5, width = 7, height = 6, dpi = 150)
 
 # c2.3 recreate one plot above using a second r graphics system
 # recreating figure 4, volume vs size of daily move, in lattice this time
@@ -187,7 +187,7 @@ fig6 <- xyplot(Abs.Daily.Return ~ Volume, data = sample_df,
                col = '#4C72B0', alpha = 0.4, pch = 16)
 fig6
 
-png('assignments/figures/assignment4/fig6_volume_vs_move_lattice.png', width = 900, height = 600)
+png('assignment_4/figures/fig6_volume_vs_move_lattice.png', width = 900, height = 600)
 print(fig6)
 dev.off()
 
@@ -211,7 +211,7 @@ fig7 <- ggplot(market_stats, aes(x = reorder(Market, -mean_return), y = mean_ret
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 fig7
-ggsave('assignments/figures/assignment4/fig7_mean_return_by_market.png', fig7, width = 8, height = 4, dpi = 150)
+ggsave('assignment_4/figures/fig7_mean_return_by_market.png', fig7, width = 8, height = 4, dpi = 150)
 
 # c3.2 key variable over time
 # same six tickers and same rebase logic as the python eda: price indexed to 100
@@ -259,4 +259,4 @@ fig8 <- ggplot(indexed_long, aes(x = Date, y = Indexed.Price, color = Ticker)) +
   ) +
   theme(legend.position = 'none')
 fig8
-ggsave('assignments/figures/assignment4/fig8_indexed_price.png', fig8, width = 10, height = 6, dpi = 150)
+ggsave('assignment_4/figures/fig8_indexed_price.png', fig8, width = 10, height = 6, dpi = 150)

@@ -1,15 +1,15 @@
 """Build the Assignment 4 report (R for Data Visualization: Fundamentals & First EDA).
 
-Follows the same pattern as build_ec1_docx.py: a cover table matching the
+Follows the same pattern as the Extra Credit 1 builder: a cover table matching the
 assignment's own template fields, then Part A (setup evidence, pasted as
 console text rather than screenshots, which the worksheet explicitly allows),
 Part B (left as a placeholder for the teammate handling the concept check),
-and Part C (the full R EDA, mirroring eda.ipynb's structure and figures).
+and Part C (the full R EDA, mirroring Assignment 2's analysis notebook).
 
-The R code itself lives in assignment4_eda.R at the repo root; this script
+The R code itself lives beside this builder as analysis.R; this script
 only assembles the written report around it.
 
-Usage: uv run python scripts/build_assignment4_docx.py
+Usage: uv run python assignment_4/build_submission.py
 """
 
 from pathlib import Path
@@ -19,10 +19,10 @@ from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-ASSIGNMENTS_DIR = REPO_ROOT / "assignments"
-FIGURES_DIR = ASSIGNMENTS_DIR / "figures" / "assignment4"
-OUTPUT_PATH = ASSIGNMENTS_DIR / "26120004_Team2_Assignment4.docx"
+ASSIGNMENT_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = ASSIGNMENT_ROOT.parent
+FIGURES_DIR = ASSIGNMENT_ROOT / "figures"
+OUTPUT_PATH = ASSIGNMENT_ROOT / "docs" / "submissions" / "26120004_Team2_Assignment4.docx"
 
 REG_NUMBER = "26120004"
 TEAM_NUMBER = "2"
@@ -70,10 +70,10 @@ def add_cover(doc):
     doc.add_paragraph()
     intro = doc.add_paragraph()
     intro.add_run(
-        "This report redoes our Assignment 2 python eda (eda.ipynb) in r, same dataset, same "
+        "This report redoes our Assignment 2 Python analysis in R, using the same dataset and "
         "questions, a different language, per the assignment's own instructions. Part C figure "
-        "numbers below are r figures 1 through 8, separate from the python eda's own figure "
-        "numbering. The full r script is assignment4_eda.R at the repo root."
+        "numbers below are our R figures 1 through 8, separate from the python eda's own figure "
+        "numbering. The full R script is assignment_4/analysis.R."
     )
     doc.add_page_break()
 
@@ -85,11 +85,13 @@ def add_section_heading(doc, text, level=1):
 
 
 def add_body(doc, lines):
-    for i, line in enumerate(lines):
+    # a blank paragraph between each bullet (per this project's own convention: bullets
+    # with breathing room, not a single dense paragraph) and one more after the last
+    # bullet, so spacing into the next heading matches the spacing within the list
+    for line in lines:
         p = doc.add_paragraph(style="List Bullet")
         p.add_run(line)
-        if i < len(lines) - 1:
-            doc.add_paragraph()
+        doc.add_paragraph()
 
 
 def add_code_block(doc, text):
@@ -144,6 +146,7 @@ def add_part_a(doc):
         "(all four load cleanly, no error text - the lines above are the standard\n"
         "\"masking\" notices every tidyverse session prints, not failures)"
     ))
+    doc.add_paragraph()
 
     doc.add_paragraph().add_run("Dataset loaded and checked:").bold = True
     add_code_block(doc, (
@@ -172,11 +175,12 @@ def add_part_a(doc):
         "5 2006-01-06 000660.KS 34950 35850 34850 35100  25539.36 12557226\n"
         "6 2006-01-09 000660.KS 35600 36750 35450 36750  26739.93 13524015"
     ))
+    doc.add_paragraph()
 
     add_body(doc, [
         "230,111 rows and 8 columns, matching what we expected and what the python eda found. "
         "R renamed Adj Close to Adj.Close automatically, since read.csv does not allow spaces in "
-        "column names, and Date loaded as plain text rather than a date type, both just how r's "
+        "column names, and Date loaded as plain text rather than a date type, both just how R's "
         "base reader works rather than anything wrong with the data.",
     ])
     doc.add_page_break()
@@ -186,6 +190,11 @@ def add_part_a(doc):
 # part b
 
 def add_qa(doc, question, answer_lines, note=None):
+    # part b answers are short, concrete concept-check answers, not the longer
+    # analytical points part c's figures get, so the bullets stay close together
+    # (a real answer to "list the seven layers" is a tight list, not one item per
+    # page); one blank paragraph after the whole question closes it off before
+    # the next one
     q = doc.add_paragraph()
     q.add_run(question).bold = True
     for line in answer_lines:
@@ -220,9 +229,11 @@ def add_part_b(doc):
         [
             "We would choose the median, since it is resistant to outliers, whereas the "
             "mean is heavily affected by extreme values.",
-        ],
-        note="team to add: a robust measure of spread (e.g. the interquartile range, IQR) "
-             "still needs to be named to fully answer this question.")
+            "The interquartile range (IQR) is a measure of spread with the same property. "
+            "It only looks at the middle 50 percent of the data, between the 25th and 75th "
+            "percentiles, so a few extreme values at either end do not move it the way they "
+            "would pull the standard deviation around.",
+        ])
 
     add_qa(doc,
         "B.3 What two parameters define a normal distribution, and what does each one "
@@ -348,7 +359,6 @@ def add_part_c0(doc):
         "eda. Nothing needs to be dropped or imputed for missingness; the real quirks in this "
         "data (mixed currencies, staggered start dates) do not show up as missing values.",
     ])
-    doc.add_paragraph()
 
 
 # ---------------------------------------------------------------------------
@@ -388,8 +398,8 @@ def add_part_c1(doc):
     add_body(doc, [
         "Figure 3's box sits tightly between about minus 3.5 percent and plus 3.7 percent, with "
         "a dense scatter of points beyond both whiskers, about 7.24 percent of all ticker-days, "
-        "identical to the python eda's outlier fence and share.",
-        "The most extreme days on record are the same real events found in python: Netflix's "
+        "the same fence the python eda found.",
+        "The most extreme days on record are the same real events: Netflix's "
         "two roughly 35 percent single-day drops (2022-04-20 and 2011-10-25), Nvidia's 31 "
         "percent drop during the 2008 crisis, Bank of America's swings in 2008-2009, Meta's 26 "
         "percent drop in 2022, and AMD's 52 percent jump in 2016. These read as genuine extreme "
@@ -413,7 +423,7 @@ def add_part_c2(doc):
         "Figure 4 shows a widening funnel, not a tight line: low volume days are almost always "
         "small moves, but high volume days can be small or huge. Volume raises the ceiling on "
         "how big a move can get without guaranteeing a big move happens, a weak relationship at "
-        "best, the same conclusion the python eda reached.",
+        "best.",
     ])
 
     doc.add_paragraph().add_run("C2.2 correlation heatmap").bold = True
@@ -463,7 +473,7 @@ def add_part_c3(doc):
         "Hong Kong, Paris, Switzerland, and Saudi Arabia lowest (0.015 percent).",
         "Korea is also the most volatile market by standard deviation (2.37 percent daily) and "
         "Saudi Arabia the calmest (1.05 percent), so higher average return and higher "
-        "volatility travel together here, same as the python eda found.",
+        "volatility travel together here.",
         "Same caveat carried over from C1.2: Saudi Arabia, Paris, and Switzerland are one or "
         "two tickers each, so this is not really a market-wide statistic, it is a statistic "
         "about a handful of individual companies wearing a market label.",
@@ -476,8 +486,7 @@ def add_part_c3(doc):
         "Broadcom's start date and the latest starter of the six, the same rebase logic as the "
         "python eda.",
         "NVDA reaches about 63,100 by 2026-02-20 and AVGO about 29,200, both far ahead of ASML "
-        "and TSM (about 58-62x) and AAPL (about 54x), with MSFT trailing at about 23x, matching "
-        "the python eda's Figure 8 numbers.",
+        "and TSM (about 58-62x) and AAPL (about 54x), with MSFT trailing at about 23x.",
         "This supports the AI rally narrowness idea but complicates the simple version of it: "
         "AVGO alone would still justify a chip-outperformance story without NVDA, but ASML and "
         "TSM end up closer to AAPL's growth than to NVDA or AVGO's.",
@@ -509,7 +518,6 @@ def add_part_c4(doc):
         "tickers, so it looks like a data recording gap specific to AZN rather than genuinely "
         "zero trading on those days for a large pharmaceutical stock.",
     ])
-    doc.add_paragraph()
 
 
 def add_part_c5(doc):
@@ -585,7 +593,7 @@ def add_deliverables(doc):
     add_section_heading(doc, "Deliverables")
     table = doc.add_table(rows=3, cols=1)
     table.cell(0, 0).text = f"Filename: {REG_NUMBER}_Team{TEAM_NUMBER}_Assignment4.docx"
-    table.cell(1, 0).text = "R script: assignment4_eda.R (repo root, contains all code from Parts A and C)"
+    table.cell(1, 0).text = "R script: assignment_4/analysis.R (contains all code from Parts A and C)"
     table.cell(2, 0).text = "Submit via: Digiicampus"
 
 

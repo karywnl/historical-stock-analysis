@@ -1,14 +1,14 @@
 """Build the Assignment EC1 practice set report.
 
-Unlike build_docx.py (which converts the whole eda.ipynb notebook into a
+Unlike the Assignment 2 builder (which converts the whole analysis notebook into a
 docx), EC1 asks for a short 3-5 page report following a template: a cover
 table, one short section per exercise with its chart(s) and interpretation,
 a critique checklist table, and the filename/submission block. This script
-writes that report directly rather than dumping assignment_ec1.ipynb cell
+writes that report directly rather than dumping the full EC1 analysis notebook cell
 by cell, since the notebook has far more code and detail than fits in five
 pages.
 
-Usage: uv run python scripts/build_ec1_docx.py
+Usage: uv run python extra_credit_1/build_submission.py
 """
 
 from pathlib import Path
@@ -18,10 +18,10 @@ from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-ASSIGNMENTS_DIR = REPO_ROOT / "assignments"
-FIGURES_DIR = ASSIGNMENTS_DIR / "figures" / "ec1"
-OUTPUT_PATH = ASSIGNMENTS_DIR / "26120004_Team2_Assignment-EC1.docx"
+ASSIGNMENT_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = ASSIGNMENT_ROOT.parent
+FIGURES_DIR = ASSIGNMENT_ROOT / "figures"
+OUTPUT_PATH = ASSIGNMENT_ROOT / "docs" / "submissions" / "26120004_Team2_Assignment-EC1.docx"
 
 REG_NUMBER = "26120004"
 TEAM_NUMBER = "2"
@@ -66,9 +66,9 @@ def add_cover(doc):
     intro.add_run(
         "This report works through exercises A to F of the EC1 practice set, applied to our own "
         "project (data/stock_data.csv, 49 tickers, 2006-01-02 to 2026-02-20) rather than a textbook "
-        "example. It builds on eda.ipynb (Assignment 2) and assignment3_analysis.ipynb (Assignment 3), "
+        "example. It builds on the Assignment 2 and Assignment 3 analysis notebooks, "
         "reusing the same tickers, groupings, and hypotheses. The full working notebook is "
-        "assignment_ec1.ipynb; this document summarizes it in report form."
+        "extra_credit_1/analysis.ipynb; this document summarizes it in report form."
     )
     doc.add_page_break()
 
@@ -114,7 +114,7 @@ def add_image_pair(doc, filename_left, filename_right, caption_left, caption_rig
 def add_exercise_a(doc):
     add_section_heading(doc, "Exercise A: Redesign for Clarity")
     doc.add_paragraph(
-        "Chosen chart: eda.ipynb Figure 8, six tickers (NVDA, AVGO, TSM, ASML, AAPL, MSFT) "
+        "Chosen chart: Assignment 2 Figure 8, six tickers (NVDA, AVGO, TSM, ASML, AAPL, MSFT) "
         "indexed to 100 since 2009-08-06."
     )
     add_body(doc, [
@@ -198,7 +198,7 @@ def add_exercise_d(doc):
 def add_exercise_e(doc):
     add_section_heading(doc, "Exercise E: Reusable Style Module")
     doc.add_paragraph(
-        "Style module: scripts/chart_style.py. A fixed six-color Okabe-Ito palette (validated with "
+        "Style module: extra_credit_1/chart_style.py. A fixed six-color Okabe-Ito palette (validated with "
         "the course's colorblind-safety checker), the same two colors for the chip/AI and rest of "
         "tech groups everywhere they appear, standard font sizes, and a standard figure size."
     )
