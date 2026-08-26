@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="693" viewBox="0 0 1600 693">
+  <rect width="1600" height="693" fill="#FFFFFF"/>
+  <text x="40" y="39" fill="#182E48" font-family="Avenir Next, Arial, sans-serif" font-size="25" font-weight="600">Every row contains all eight dataset columns</text>
+  <rect x="40" y="61" width="1520" height="72" rx="6" fill="#EAF2FA"/>
+  <line x1="40" y1="133" x2="1560" y2="133" stroke="#ACC6E4" stroke-width="2"/>
+  <line x1="40" y1="213" x2="1560" y2="213" stroke="#DDE5EE" stroke-width="1.5"/>
+  <line x1="40" y1="293" x2="1560" y2="293" stroke="#DDE5EE" stroke-width="1.5"/>
+  <line x1="40" y1="373" x2="1560" y2="373" stroke="#ACC6E4" stroke-width="2"/>
+  <g fill="#182E48" font-family="Avenir Next, Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle">
+    <text x="127" y="105">Date</text><text x="287" y="105">Ticker</text><text x="460" y="105">Open</text><text x="633" y="105">High</text>
+    <text x="807" y="105">Low</text><text x="980" y="105">Close</text><text x="1173" y="105">Adj Close</text><text x="1440" y="105">Volume</text>
+  </g>
+  <g fill="#182E48" font-family="Avenir Next, Arial, sans-serif" font-size="18.5" text-anchor="middle">
+    <text x="127" y="180">2026-02-20</text><text x="287" y="180">AAPL</text><text x="460" y="180">258.97</text><text x="633" y="180">264.75</text><text x="807" y="180">258.16</text><text x="980" y="180">264.58</text><text x="1173" y="180">264.58</text><text x="1440" y="180">4,20,44,900</text>
+    <text x="127" y="260">2026-02-20</text><text x="287" y="260">005930.KS</text><text x="460" y="260">1,90,000</text><text x="633" y="260">1,90,300</text><text x="807" y="260">1,88,600</text><text x="980" y="260">1,90,100</text><text x="1173" y="260">1,90,100</text><text x="1440" y="260">2,42,13,880</text>
+    <text x="127" y="340">2026-02-20</text><text x="287" y="340">MC.PA</text><text x="460" y="340">541.40</text><text x="633" y="340">559.20</text><text x="807" y="340">540.10</text><text x="980" y="340">554.70</text><text x="1173" y="340">554.70</text><text x="1440" y="340">9,29,807</text>
+  </g>
+  <line x1="40" y1="421" x2="1560" y2="421" stroke="#1973B7" stroke-width="3.5"/>
+  <text x="40" y="461" fill="#1973B7" font-family="Avenir Next, Arial, sans-serif" font-size="19" font-weight="600">What the columns mean</text>
+  <g font-family="Avenir Next, Arial, sans-serif" font-size="16.5" fill="#58657C">
+    <text x="40" y="501"><tspan fill="#182E48" font-weight="600">Date</tspan><tspan>  trading session</tspan></text>
+    <text x="433" y="501"><tspan fill="#182E48" font-weight="600">Ticker</tspan><tspan>  company identifier</tspan></text>
+    <text x="827" y="501"><tspan fill="#182E48" font-weight="600">Open</tspan><tspan>  first traded price</tspan></text>
+    <text x="1220" y="501"><tspan fill="#182E48" font-weight="600">High</tspan><tspan>  highest price that day</tspan></text>
+    <text x="40" y="545"><tspan fill="#182E48" font-weight="600">Low</tspan><tspan>  lowest price that day</tspan></text>
+    <text x="433" y="545"><tspan fill="#182E48" font-weight="600">Close</tspan><tspan>  final traded price</tspan></text>
+    <text x="827" y="545"><tspan fill="#182E48" font-weight="600">Adj Close</tspan><tspan>  close adjusted for dividends</tspan></text>
+    <text x="1220" y="545"><tspan fill="#182E48" font-weight="600">Volume</tspan><tspan>  shares traded</tspan></text>
+  </g>
+  <text x="40" y="620" fill="#D06F21" font-family="Avenir Next, Arial, sans-serif" font-size="17.5" font-weight="600">Use Adj Close for returns and growth.</text>
+  <text x="40" y="653" fill="#7A8596" font-family="Avenir Next, Arial, sans-serif" font-size="14.5">Sample: data/stock_data.csv, 2026-02-20. Prices remain in each listing's local currency.</text>
+</svg>
