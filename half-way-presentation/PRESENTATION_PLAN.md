@@ -12,22 +12,38 @@
 - Give every chart a direct written takeaway, not only a descriptive title.
 - Make every slide readable from the back of the room.
 
-## Recommended 10-slide story
+## Actual 11-slide story (deck as submitted)
+
+Speaking sections follow the deck's own three parts: Mirthula covers the
+introduction through hypothesis setup (5 slides), Karthikeyan covers the
+three hypothesis-evidence slides (3 slides), Lakshmi covers the conclusion
+(3 slides). This keeps everyone at roughly the same amount of talk time
+even though the slide counts differ, because the intro slides run shorter
+and the hypothesis/conclusion slides run longer.
 
 | Slide | Takeaway-style title | Content and existing asset | Time | Speaker |
 |---|---|---|---:|---|
-| 1 | Historical Stock Analysis: Is diversification thinner than it looks? | Team 2, three members, one-line dataset description | 0:30 | Karthikeyan |
-| 2 | Diversification looks broad until we test sectors and crises | State H1-H3 as one connected question: AI-rally concentration, regional correlation in sudden crashes, and volatility/volume during panic | 0:45 | Karthikeyan |
-| 3 | Prior work predicts stress correlation, but AI breadth depends on the boundary | One sentence each from Preis et al., Morningstar, and J.P. Morgan; explain how they sharpened the hypotheses | 0:45 | Karthikeyan |
-| 4 | We analyzed 230,111 ticker-days twice, in Python and R | 49 tickers, 2006-01-02 to 2026-02-20; Python EDA/hypothesis testing and R replication/wrangling | 0:45 | Mirthula |
-| 5 | Mixed currencies and uneven coverage required normalization | Returns/index-to-100, common rebase dates, unequal regional representation, 1,706 zero-volume rows | 0:45 | Mirthula |
-| 6 | Selected chip/AI stocks gained 549%; broader tech gained 168% | Use `assignment_3/figures/figure_a_ai_rally.png`; add 0.26% vs 0.14% mean daily return and p = 0.0073 as a small callout | 1:00 | Mirthula |
-| 7 | Regional correlation rose most sharply in the sudden 2020 crash | Use `extra_credit_1/figures/ec1_f_widened_basket.png`; emphasize calm 0.282, 2008 0.326, 2020 0.539, 2022 0.196 and disclose the thin Paris/Korea/Switzerland baskets | 1:00 | Lakshmi |
-| 8 | The biggest monthly volatility spikes were October 2008 and March 2020 | Use `assignment_5/part_2/figures/b2_monthly_absolute_return.png`; call out 4.82% and 4.67% | 1:00 | Lakshmi |
-| 9 | A log scale recovered five growth stories hidden by the linear chart | Side-by-side `extra_credit_1/figures/ec1_a_before.png` and `extra_credit_1/figures/ec1_a_after.png`; name relative-vs-absolute scaling, label overlap, and reduced non-data ink | 1:30 | Lakshmi |
-| 10 | Next: turn the validated patterns into an interactive dashboard | Power BI/Tableau plan, R wrangling lessons, open questions, limitations, and a clear close | 1:00 | Karthikeyan |
+| 1 | Historical Stock Analysis: does diversification survive a closer look? | Team 2, three members, one-line dataset description | 0:20 | Mirthula |
+| 2 | Each row is one company on one trading day | 230,111 rows, 8 columns, 0 missing values, 2006-01-02 to 2026-02-20; the Samsung row shows why raw prices aren't comparable | 0:35 | Mirthula |
+| 3 | The file is complete, but coverage is uneven | `assignment_4/figures/fig2_market_counts.png`; 0 missing fields, 0 duplicate Date-Ticker pairs, 1,706 zero-volume rows; US dominance; the returns/index-to-100 decision; say the Python (explore/test) vs R (replicate/reshape) split out loud here | 0:40 | Mirthula |
+| 4 | Three testable claims frame everything that follows | NEW slide: define a hypothesis as a testable claim, then state H1/H2/H3 in plain language before any evidence appears | 0:35 | Mirthula |
+| 5 | Two ticker groups, four market periods make it testable | Chip/AI vs broader-tech tickers; calm/2008/2020/2022 periods; correlation defined in one line | 0:35 | Mirthula |
+| 6 | Selected chip/AI stocks gained 549%; broader tech gained 168% | Use `assignment_3/figures/figure_a_ai_rally.png`; 0.26% vs 0.14% mean daily return and p = 0.0073 | 0:55 | Karthikeyan |
+| 7 | Regional correlation rose most sharply in the sudden 2020 crash | Use `extra_credit_1/figures/ec1_f_widened_basket.png`; calm 0.282, 2008 0.326, 2020 0.539; disclose the thin Paris/Korea/Switzerland baskets | 0:55 | Karthikeyan |
+| 8 | The biggest monthly volatility spikes were October 2008 and March 2020 | Use `assignment_5/part_2/figures/b2_monthly_absolute_return.png`; call out 4.82% and 4.67% | 0:55 | Karthikeyan |
+| 9 | A log scale recovered growth stories hidden by the linear chart | Side-by-side `extra_credit_1/figures/ec1_a_before.png` and `extra_credit_1/figures/ec1_a_after.png`; name relative-vs-absolute scaling, label overlap, and reduced non-data ink | 0:55 | Lakshmi |
+| 10 | Diversification is thinner when it matters most | Synthesizes H1-H3; closes with what we can/cannot claim (patterns, not causality or forecasting) and the regional/volume limits | 0:50 | Lakshmi |
+| 11 | Next: turn the validated patterns into an interactive dashboard | Power BI/Tableau plan, R wrangling lessons, open risks, a clear close | 0:45 | Lakshmi |
 
-Planned speaking time: 9:00. Q&A buffer: 1:00.
+Planned speaking time: 8:00. Q&A buffer: 2:00.
+
+Per-speaker total: Mirthula 2:45, Karthikeyan 2:45, Lakshmi 2:30.
+
+Note: the assignment brief says "aim for 8-10 slides"; this deck runs 11.
+That's judged worth it to keep the hypothesis-claims slide and the full
+data-audit slide intact rather than cutting real content to hit the
+number exactly — but if time is tight in rehearsal, folding slide 4 back
+into slide 5 is the next easiest cut.
 
 ## What to say on each section
 
